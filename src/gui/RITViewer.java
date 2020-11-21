@@ -1,61 +1,51 @@
 package gui;
 
 import javafx.application.Application;
-import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.layout.GridPane;
+import javafx.scene.image.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.Scanner;
-import java.lang.Math;
 
 public class RITViewer extends Application {
 
-
     @Override
     public void start(Stage stage) throws Exception {
+
         //Set title
         stage.setTitle("RITViewer");
-        //Get fileInput
-        Parameters params = getParameters();
-        String filename = params.getRaw().get(0);
-        FileReader fr = new FileReader(filename);
-        Scanner scanner = new Scanner(fr);
-        List<Integer> values = new ArrayList<>();
-        while (scanner.hasNext()){
-            values.add(scanner.nextInt());
-        }
-        int size = (int) Math.sqrt(values.size());
 
-        //Make GridPane
-        GridPane gridPane = new GridPane();
-        gridPane.getCellBounds(size, size);
-        for(int i=0; i<size;i++){
-            for(int j=0;j<size; j++){
-                //Create Canvas and fill with required color
-                final Canvas canvas = new Canvas(1,1);
-                GraphicsContext gc = canvas.getGraphicsContext2D();
-                gc.setFill(Color.grayRgb(values.get(j*size+i)));
-                gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-                //Add to gridPane
-                gridPane.add(canvas,  i, j, 1, 1);
-            }
-        }
-        //
-        Group root = new Group();
-        root.getChildren().add(gridPane);
-        Scene scene = new Scene(root, size, size, Color.BLACK);
-        stage.setMinWidth(size);
-        stage.setMinHeight(size);
-        stage.setScene(scene);
-        stage.show();
+        //earth256x256.txt
+        int imageWidth = 256;
+        int imageHeight = 256;
+
+        //Load file into a scanner and generate a grayscale image from its data.
+        Scanner fileScanner = new Scanner( RITViewer.class.getResourceAsStream("/uncompressed/earth256x256.txt") );
+        ImageView imageView = new ImageView( generateGrayscaleImage(fileScanner, imageHeight, imageWidth) );
+
+        //Create basic scene for testing purposes.
+        BorderPane borderPane = new BorderPane();
+        borderPane.setCenter(imageView);
+        stage.setScene( new Scene(borderPane, 256, 256) );
+        stage.show(); //Display the stage.
+
     }
     public static void main(String[] args) {
         Application.launch(args);
+    }
+
+    private Image generateGrayscaleImage(Scanner grayscaleValues, int imageWidth, int imageHeight) {
+        WritableImage grayscaleImage = new WritableImage(imageWidth, imageHeight);
+        PixelWriter pixelWriter = grayscaleImage.getPixelWriter();
+        for( int y = 0; y < imageHeight; ++y ) {
+            for ( int x = 0; x < imageWidth; ++x ) {
+                //Get pixel values from file one-by-one.
+                Color color = Color.grayRgb( grayscaleValues.nextInt() );
+                pixelWriter.setColor(x,y,color);
+            }
+        }
+        return grayscaleImage;
     }
 }
