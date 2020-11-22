@@ -2,11 +2,8 @@ package ptui;
 
 import model.RITQTCodec;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Scanner;
-import java.util.stream.IntStream;
+import java.io.*;
+import java.nio.file.Path;
 
 public class RITUncompress {
 
@@ -16,8 +13,10 @@ public class RITUncompress {
             return;
         }
 
-        String inputFilename = args[0];
-        String outputFilename = args[1];
+        //TODO: Add error handling.
+
+        InputStream inputFile = new FileInputStream( args[0] );
+//        FileOutputStream outputFile = new FileOutputStream( args[1] );
 
         RITQTCodec codec = new RITQTCodec();
         int[][] dataArray = codec.decodeToArray(

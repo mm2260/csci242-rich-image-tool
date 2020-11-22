@@ -26,6 +26,7 @@ public class RITViewer extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        //TODO: Error handling
 
         //Set title
         stage.setTitle("RITViewer");
