@@ -20,19 +20,13 @@ public class RITUncompress {
         String outputFilename = args[1];
 
         RITQTCodec codec = new RITQTCodec();
-        int[] dataArray = codec.decodeToArray(
-                RITUncompress.class.getResourceAsStream(inputFilename) );
+        int[][] dataArray = codec.decodeToArray(
+                RITUncompress.class.getResourceAsStream("/compressed/simple4x4.rit") );
 
-        FileWriter fileWriter = new FileWriter(outputFilename);//Error in writing file.
-        for(int value : dataArray){
-            fileWriter.write(value);
-        }
-        fileWriter.close();
-
-        //Output
-        System.out.println("Input file: " + inputFilename);
-        for( int value : dataArray ) {
-            System.out.print(value + " ");
+        for( int row[] : dataArray ) {
+            for( int value : row ) {
+                System.out.println(value);
+            }
         }
 
         System.out.println("\nOutput File: " + outputFilename);
