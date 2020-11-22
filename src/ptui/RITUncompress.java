@@ -2,9 +2,6 @@ package ptui;
 
 import model.RITQTCodec;
 
-import java.util.Scanner;
-import java.util.stream.IntStream;
-
 public class RITUncompress {
 
     public static void main(String[] args) {
@@ -14,11 +11,13 @@ public class RITUncompress {
         }
 
         RITQTCodec codec = new RITQTCodec();
-        int[] dataArray = codec.decodeToArray(
-                RITUncompress.class.getResourceAsStream("/compressed/simple8x8-2.rit") );
+        int[][] dataArray = codec.decodeToArray(
+                RITUncompress.class.getResourceAsStream("/compressed/simple4x4.rit") );
 
-        for( int value : dataArray ) {
-            System.out.println(value);
+        for( int row[] : dataArray ) {
+            for( int value : row ) {
+                System.out.println(value);
+            }
         }
     }
 

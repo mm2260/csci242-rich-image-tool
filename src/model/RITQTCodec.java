@@ -11,34 +11,30 @@ public class RITQTCodec {
         return null;
     }
 
-    public int[] decodeToArray( InputStream resource ) {
+    public int[][] decodeToArray( InputStream resource ) {
         Scanner fileScanner = new Scanner(resource);
 
         int size = fileScanner.nextInt();
-        int[] dataArray = new int[size];
         int sideLength = (int) Math.sqrt(size);
+        int[][] dataArray = new int[sideLength][sideLength];
 
-        new Decoder(sideLength, sideLength, fileScanner).decode(dataArray, size, 0, 0);
+        new Decoder(fileScanner).decode(dataArray, size, 0, 0);
         return dataArray;
     }
 
     private static class Decoder {
 
         private final Scanner fileScanner;
-        private final int imageWidth;
-        private final int imageHeight;
 
-        public Decoder(int imageWidth, int imageHeight, Scanner fileScanner) {
+        public Decoder(Scanner fileScanner) {
             this.fileScanner = fileScanner;
-            this.imageHeight = imageHeight;
-            this.imageWidth = imageWidth;
         }
 
-        private void decode(int[] dataArray, int size, int startRow, int startCol) {
+        private void decode(int[][] dataArray, int size, int startRow, int startCol) {
             int val = this.fileScanner.nextInt();
 
             if(size==1) {
-                dataArray[ castToIndex(startRow, startCol) ] = val;
+                dataArray[startRow][startCol] = val;
             } else {
                 float sqrtSizeDividedByTwo = (float) (Math.sqrt(size) / 2);
 
@@ -60,16 +56,11 @@ public class RITQTCodec {
                     //Fill in pixel values.
                     IntStream.range(startRow, startRow+ (int)sqrtSizeDividedByTwo *2 ).forEach(row -> {
                         IntStream.range(startCol, startCol+(int)sqrtSizeDividedByTwo *2 ).forEach( col -> {
-                            dataArray[ castToIndex(row, col) ] = val;
+                            dataArray[row][col] = val;
                         });
                     });
                 }
             }
-
-        }
-
-        private int castToIndex(int row, int col) {
-            return row*(imageWidth) + col%(imageHeight);
         }
 
     }
