@@ -18,6 +18,8 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Scanner;
 
 public class RITViewer extends Application {
@@ -28,9 +30,9 @@ public class RITViewer extends Application {
         //Set title
         stage.setTitle("RITViewer");
 
-        //earth256x256.txt
-        int imageWidth = 256;
-        int imageHeight = 256;
+        //get parameters
+        Parameters params = getParameters();
+        String fileName = params.getRaw().get(0);
 
         //Load file into a scanner and generate a grayscale image from its data.
         InputStream fileInput = new FileInputStream(getParameters().getRaw().get(0));
