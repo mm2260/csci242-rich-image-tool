@@ -7,6 +7,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+import java.io.File;
+import java.net.URL;
 import java.util.Scanner;
 
 public class RITViewer extends Application {
@@ -20,6 +22,11 @@ public class RITViewer extends Application {
         //earth256x256.txt
         int imageWidth = 256;
         int imageHeight = 256;
+
+        URL url = RITViewer.class.getResource("/uncompressed/earth256x256.txt");
+        File file = new File(url.toURI());
+
+
 
         //Load file into a scanner and generate a grayscale image from its data.
         Scanner fileScanner = new Scanner( RITViewer.class.getResourceAsStream("/uncompressed/earth256x256.txt") );
