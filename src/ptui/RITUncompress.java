@@ -28,7 +28,7 @@ public class RITUncompress {
             }
         }
 
-        System.out.println("\nOutput File: " + outputFilename);
+//        System.out.println("\nOutput File: " + outputFilename);
     }
 
 }

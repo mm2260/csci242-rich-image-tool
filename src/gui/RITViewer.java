@@ -35,10 +35,25 @@ public class RITViewer extends Application {
         Parameters params = getParameters();
         String fileName = params.getRaw().get(0);
 
+        //TODO: Parse through the file and set image size.
         //Load file into a scanner and generate a grayscale image from its data.
-        InputStream fileInput = new FileInputStream(getParameters().getRaw().get(0));
+        InputStream fileInput = new FileInputStream( fileName );
         Scanner fileScanner = new Scanner( fileInput );
-//        Scanner fileScanner = new Scanner( RITViewer.class.getResourceAsStream("/uncompressed/smileyface256x256.txt") );
+        InputStream validationInputStream = new FileInputStream( fileName );
+        Scanner validationScanner = new Scanner( validationInputStream );
+
+        //Validation parse through input file, calculate size.
+        int size = 0;
+        while( validationScanner.hasNextInt() ) {
+            ++size;
+            System.out.println("SIZE: "+ size + " VALUE: " + validationScanner.nextInt());
+        }
+
+        System.out.println("FINAL SIZE: "+ (int)( Math.sqrt(size)) );
+
+        int imageWidth, imageHeight;
+        imageHeight = imageWidth = (int)( Math.sqrt(size) ) ;
+
         ImageView imageView = new ImageView( FxUtils.generateGrayscaleImage(fileScanner, imageWidth, imageHeight) );
 
         //Create basic scene for testing purposes.
