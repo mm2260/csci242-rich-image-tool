@@ -1,5 +1,8 @@
 package model;
 
+import model.exceptions.InvalidImageSpecificationException;
+import model.utils.Utils;
+
 import java.io.InputStream;
 import java.util.Scanner;
 import java.util.stream.IntStream;
@@ -11,10 +14,14 @@ public class RITQTCodec {
         return null;
     }
 
-    public int[][] decodeToArray( InputStream resource ) {
+    public int[][] decodeToArray( InputStream resource ) throws InvalidImageSpecificationException {
         Scanner fileScanner = new Scanner(resource);
 
         int size = fileScanner.nextInt();
+        if( !Utils.isPowerOfTwo(size) ) {
+            throw new InvalidImageSpecificationException(size);
+        }
+
         int sideLength = (int) Math.sqrt(size);
         int[][] dataArray = new int[sideLength][sideLength];
 

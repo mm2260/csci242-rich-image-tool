@@ -13,22 +13,24 @@ public class RITUncompress {
             return;
         }
 
-        //TODO: Add error handling.
-
         InputStream inputFile = new FileInputStream( args[0] );
-//        FileOutputStream outputFile = new FileOutputStream( args[1] );
+        BufferedWriter writer = new BufferedWriter( new FileWriter( args[1] ) );
 
         RITQTCodec codec = new RITQTCodec();
+        //Codec takes InputStream as parameter and returns raw pixel data as a 2D-Array.
         int[][] dataArray = codec.decodeToArray(
-                RITUncompress.class.getResourceAsStream("/compressed/simple4x4.rit") );
+                inputFile );
 
         for( int row[] : dataArray ) {
             for( int value : row ) {
                 System.out.println(value);
+                writer.append( String.valueOf(value) );
+                writer.newLine();
             }
         }
 
-//        System.out.println("\nOutput File: " + outputFilename);
+        writer.close();
+        System.out.println("Output written to: " + args[1]);
     }
 
 }

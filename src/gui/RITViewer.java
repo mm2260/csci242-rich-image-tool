@@ -1,13 +1,8 @@
 package gui;
 
-import gui.components.ImageExplorerView;
 import gui.utils.FxConstants;
-import gui.utils.FxUtils;
 import javafx.application.Application;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
-import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -16,16 +11,15 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
-import javafx.scene.image.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import model.exceptions.InvalidImageSpecificationException;
+import model.exceptions.ValueOutOfBoundsException;
+import model.utils.Utils;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
+import java.io.FileNotFoundException;
 import java.util.List;
-import java.util.Scanner;
 
 public class RITViewer extends Application {
 
@@ -40,26 +34,26 @@ public class RITViewer extends Application {
         Parameters params = getParameters();
         String fileName = params.getRaw().get(0);
 
-        //TODO: Parse through the file and set image size + validate final size & if values are clamped.
-        //Load file into a scanner and generate a grayscale image from its data.
-        InputStream fileInput = new FileInputStream( fileName );
-        Scanner fileScanner = new Scanner( fileInput );
-        InputStream validationInputStream = new FileInputStream( fileName );
-        Scanner validationScanner = new Scanner( validationInputStream );
-
-        //Validation parse through input file, calculate size.
-        int imageWidth, imageHeight;
+        List<Integer> values = null;
         int size = 0;
-        while( validationScanner.hasNextInt() ) {
-            validationScanner.nextInt();
-            ++size;
+
+        //Load in data from file to list of values, and set the size.
+        try {
+            values = Utils.readFileDataToList(fileName); //Load data.
+            size = (int) Math.sqrt(values.size());  //Set size as side-length.
+        } catch (FileNotFoundException e ) {
+            System.out.println(e.toString());
+            e.printStackTrace();
+        } catch (ValueOutOfBoundsException e ) {
+            System.out.println("Pixel values can only be between 0 and 255.");
+            e.printStackTrace();
+        } catch (InvalidImageSpecificationException e ) {
+            System.out.println("The image specification is invalid -- image size is not a power of 2.");
+            e.printStackTrace();
         }
-        imageHeight = imageWidth = (int)( Math.sqrt(size) ) ;
-        size = imageHeight;
-        List<Integer> values = new ArrayList<>();
-        while (fileScanner.hasNextInt()){
-            values.add(fileScanner.nextInt());
-        }
+
+        int progress = 0;
+        int totalPixels = values.size();
 
         //Make GridPane
         GridPane gridPane = new GridPane();
@@ -73,8 +67,13 @@ public class RITViewer extends Application {
                 gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
                 //Add to gridPane
                 gridPane.add(canvas,  i, j, 1, 1);
+
+                System.out.println("PROGRESS: " + (++progress*100)/totalPixels + "%" );
             }
         }
+        System.out.println("LOADING...");
+        System.out.println("INITIALIZING GUI...");
+
         //
         Group workArea = new Group();
         workArea.getChildren().add(gridPane);
@@ -114,37 +113,17 @@ public class RITViewer extends Application {
         borderPane.setCenter(workArea);
 
         StackPane root = new StackPane( borderPane, bottomPanel );
-        root.setAlignment( bottomPanel, Pos.BOTTOM_CENTER );
+        StackPane.setAlignment( bottomPanel, Pos.BOTTOM_CENTER );
 
         stage.setScene( new Scene( root, 512, 512 ) );
         stage.setMinWidth(256);     //Set minimum window width.
         stage.setMinHeight(360);    //Set minimum window height.
         stage.show(); //Display the stage.
 
+        System.out.println("GUI Initialized.");
     }
+
     public static void main(String[] args) {
         Application.launch(args);
     }
 }
-
-// <ALTERNATIVE WRITABLE IMAGE IMPLEMENTATION>
-
-//        ImageView imageView = new ImageView( FxUtils.generateGrayscaleImage(fileScanner, imageWidth, imageHeight) );
-
-//        ImageExplorerView explorerView = new ImageExplorerView( new ImageView(
-//                FxUtils.generateGrayscaleImage(fileScanner, imageWidth, imageHeight) )
-//                );
-//
-//        BorderPane root = new BorderPane();
-//        root.setCenter( explorerView.getImageView() );
-//
-//        explorerView.getImageView().fitHeightProperty().bind(root.heightProperty());
-//        explorerView.getImageView().fitWidthProperty().bind(root.widthProperty());
-
-
-//Create basic scene for testing purposes.
-//        BorderPane workArea = new BorderPane();
-//        workArea.setBackground( new Background( new BackgroundFill(FxConstants.ColorPalette.gray2,
-//                                                CornerRadii.EMPTY, Insets.EMPTY)));
-//        workArea.setCenter(imageView);
-//        workArea.getCenter().minHeight(0);
