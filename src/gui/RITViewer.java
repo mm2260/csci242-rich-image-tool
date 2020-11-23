@@ -9,7 +9,11 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.*;
@@ -19,6 +23,8 @@ import javafx.stage.Stage;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class RITViewer extends Application {
@@ -49,35 +55,66 @@ public class RITViewer extends Application {
             ++size;
         }
         imageHeight = imageWidth = (int)( Math.sqrt(size) ) ;
-        ImageExplorerView explorerView = new ImageExplorerView( new ImageView(
-                FxUtils.generateGrayscaleImage(fileScanner, imageWidth, imageHeight) )
-                );
+        size = imageHeight;
+        List<Integer> values = new ArrayList<>();
+        while (fileScanner.hasNextInt()){
+            values.add(fileScanner.nextInt());
+        }
 
-        BorderPane root = new BorderPane();
-        root.setCenter( explorerView.getImageView() );
+        //Make GridPane
+        GridPane gridPane = new GridPane();
+        gridPane.getCellBounds(size, size);
+        for(int i=0; i<size;i++){
+            for(int j=0;j<size; j++){
+                //Create Canvas and fill with required color
+                final Canvas canvas = new Canvas(1,1);
+                GraphicsContext gc = canvas.getGraphicsContext2D();
+                gc.setFill(Color.grayRgb(values.get(j*size+i)));
+                gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+                //Add to gridPane
+                gridPane.add(canvas,  i, j, 1, 1);
+            }
+        }
+        //
+        Group workArea = new Group();
+        workArea.getChildren().add(gridPane);
 
-        explorerView.getImageView().fitHeightProperty().bind(root.heightProperty());
-        explorerView.getImageView().fitWidthProperty().bind(root.widthProperty());
+        //Adding bottom panel
+        Label sliderLabel = new Label("Zoom:");
+        sliderLabel.setTextFill(FxConstants.ColorPalette.gray1);
+        Slider slider = new Slider(1, 5, 1);
+        slider.setBlockIncrement(1);
+        slider.setMajorTickUnit(1);
+        slider.setMinorTickCount(0);
+        slider.setShowTickLabels(true);
+        slider.setSnapToTicks(true);
+        slider.setStyle("-fx-tick-label-fill: white;");
 
+        slider.valueProperty().addListener( (observable, oldValue, newValue ) -> {
+            for( Node cell : gridPane.getChildren() ) {
+                Canvas canvas = (Canvas) cell;
+                canvas.setHeight((Double) newValue);
+                canvas.setWidth((Double) newValue);
+                GraphicsContext gc = canvas.getGraphicsContext2D();
+                gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+            }
+        } );
 
-//        //Create basic scene for testing purposes.
-//        BorderPane root = new BorderPane();
-//        root.setBackground( new Background( new BackgroundFill(FxConstants.ColorPalette.gray2,
-//                                                CornerRadii.EMPTY, Insets.EMPTY)));
-//        root.setCenter(imageView);
-//        root.getCenter().minHeight(0);
-//
-//        //Adding bottom panel
-//        Label sliderLabel = new Label("Zoom:");
-//        sliderLabel.setTextFill( Color.WHITE );
-//        Slider slider = new Slider();
-//        HBox bottomPanel = new HBox( sliderLabel, slider );
-//        bottomPanel.setBackground( new Background( new BackgroundFill(FxConstants.ColorPalette.gray1,
-//                                       CornerRadii.EMPTY, Insets.EMPTY)));
-//        bottomPanel.setPadding(new Insets(15, 12, 15, 12));
-//        bottomPanel.setSpacing(10);
-//        bottomPanel.setAlignment( Pos.CENTER_RIGHT );
-//        root.setBottom(bottomPanel);
+        HBox bottomPanel = new HBox( sliderLabel, slider );
+        bottomPanel.setBackground( new Background( new BackgroundFill(FxConstants.ColorPalette.secondary,
+                                       CornerRadii.EMPTY, Insets.EMPTY)));
+        bottomPanel.setPadding(new Insets(15, 12, 15, 12));
+        bottomPanel.setSpacing(10);
+        bottomPanel.setAlignment( Pos.CENTER_RIGHT );
+        bottomPanel.setMaxHeight(40);
+
+        BorderPane borderPane = new BorderPane();
+        borderPane.setBackground( new Background( new BackgroundFill( FxConstants.ColorPalette.gray2,
+                                                CornerRadii.EMPTY, Insets.EMPTY) ) );
+        borderPane.setCenter(workArea);
+
+        StackPane root = new StackPane( borderPane, bottomPanel );
+        root.setAlignment( bottomPanel, Pos.BOTTOM_CENTER );
 
         stage.setScene( new Scene( root, 512, 512 ) );
         stage.setMinWidth(256);     //Set minimum window width.
@@ -89,3 +126,25 @@ public class RITViewer extends Application {
         Application.launch(args);
     }
 }
+
+// <ALTERNATIVE WRITABLE IMAGE IMPLEMENTATION>
+
+//        ImageView imageView = new ImageView( FxUtils.generateGrayscaleImage(fileScanner, imageWidth, imageHeight) );
+
+//        ImageExplorerView explorerView = new ImageExplorerView( new ImageView(
+//                FxUtils.generateGrayscaleImage(fileScanner, imageWidth, imageHeight) )
+//                );
+//
+//        BorderPane root = new BorderPane();
+//        root.setCenter( explorerView.getImageView() );
+//
+//        explorerView.getImageView().fitHeightProperty().bind(root.heightProperty());
+//        explorerView.getImageView().fitWidthProperty().bind(root.widthProperty());
+
+
+//Create basic scene for testing purposes.
+//        BorderPane workArea = new BorderPane();
+//        workArea.setBackground( new Background( new BackgroundFill(FxConstants.ColorPalette.gray2,
+//                                                CornerRadii.EMPTY, Insets.EMPTY)));
+//        workArea.setCenter(imageView);
+//        workArea.getCenter().minHeight(0);
