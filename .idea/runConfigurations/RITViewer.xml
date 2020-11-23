@@ -3,10 +3,10 @@
     <option name="INCLUDE_PROVIDED_SCOPE" value="true" />
     <option name="MAIN_CLASS_NAME" value="gui.RITViewer" />
     <module name="RIT" />
-    <option name="PROGRAM_PARAMETERS" value="images/uncompressed/redsox512x512.txt" />
+    <option name="PROGRAM_PARAMETERS" value="images/uncompressed/simple32x32.txt" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="gui.*" />
+        <option name="PATTERN" value="gui.utils.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>

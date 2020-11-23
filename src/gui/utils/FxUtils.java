@@ -1,4 +1,4 @@
-package gui;
+package gui.utils;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;

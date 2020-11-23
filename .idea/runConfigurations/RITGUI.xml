@@ -5,7 +5,7 @@
     <module name="RIT" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="gui.*" />
+        <option name="PATTERN" value="gui.utils.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>

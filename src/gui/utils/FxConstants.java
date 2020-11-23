@@ -1,8 +1,8 @@
-package gui;
+package gui.utils;
 
 import javafx.scene.paint.Color;
 
-public abstract class Constants {
+public abstract class FxConstants {
 
     public abstract static class ColorPalette {
 
