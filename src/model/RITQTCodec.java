@@ -25,6 +25,7 @@ public class RITQTCodec {
         int sideLength = (int) Math.sqrt(size);
         int[][] dataArray = new int[sideLength][sideLength];
 
+        //Pass dataArray reference to recursive decoder function
         new Decoder(fileScanner).decode(dataArray, size, 0, 0);
         return dataArray;
     }
