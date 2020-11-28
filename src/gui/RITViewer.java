@@ -21,6 +21,8 @@ import model.utils.Utils;
 import java.io.FileNotFoundException;
 import java.util.List;
 
+import static javafx.application.Platform.exit;
+
 public class RITViewer extends Application {
 
     @Override
@@ -42,14 +44,14 @@ public class RITViewer extends Application {
             values = Utils.readFileDataToList(fileName); //Load data.
             size = (int) Math.sqrt(values.size());  //Set size as side-length.
         } catch (FileNotFoundException e ) {
-            System.out.println(e.toString());
-            e.printStackTrace();
+            System.out.println("[-] File not found");
+            System.exit(-1);
+
         } catch (ValueOutOfBoundsException e ) {
-            System.out.println("Pixel values can only be between 0 and 255.");
-            e.printStackTrace();
+            System.exit(-1);
+
         } catch (InvalidImageSpecificationException e ) {
-            System.out.println("The image specification is invalid -- image size is not a power of 2.");
-            e.printStackTrace();
+            System.exit(-1);
         }
 
         int progress = 0;
@@ -68,10 +70,10 @@ public class RITViewer extends Application {
                 //Add to gridPane
                 gridPane.add(canvas,  i, j, 1, 1);
 
-                System.out.println("PROGRESS: " + (++progress*100)/totalPixels + "%" );
+                System.out.print("\rPROGRESS: " + (++progress*100)/totalPixels + "%" );
             }
         }
-        System.out.println("LOADING...");
+        System.out.println("\nLOADING...");
         System.out.println("INITIALIZING GUI...");
 
         //
