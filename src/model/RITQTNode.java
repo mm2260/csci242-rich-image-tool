@@ -9,23 +9,22 @@ package model;
  * and thus has split itself into 4 sub-regions.
  *
  * @author Sean Strout @ RIT
- * @author Mohammed Mehboob
  */
 public class RITQTNode {
     /** The node's value */
-    private final int val;
+    private int val;
 
     /** quadrant II */
-    private final RITQTNode ul;
+    private RITQTNode ul;
 
     /** quadrant I */
-    private final RITQTNode ur;
+    private RITQTNode ur;
 
     /** quadrant III */
-    private final RITQTNode ll;
+    private RITQTNode ll;
 
     /** quadrant IV */
-    private final RITQTNode lr;
+    private RITQTNode lr;
 
     /**
      * Construct a leaf node with no children.

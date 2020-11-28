@@ -1,31 +1,25 @@
 package model;
 
-import model.exceptions.InvalidImageSpecificationException;
-import model.utils.Utils;
-
 import java.io.InputStream;
 import java.util.Scanner;
 import java.util.stream.IntStream;
 
+//TODO: Add codec documentation.
 public class RITQTCodec {
 
     public RITQTNode encode(  ) {
-        //TODO
+        //TODO: Implement encoding (recursive?)
         return null;
     }
 
-    public int[][] decodeToArray( InputStream resource ) throws InvalidImageSpecificationException {
+    public int[][] decodeToArray( InputStream resource ) {
         Scanner fileScanner = new Scanner(resource);
 
+        //TODO: Move data loading responsibility to separate class.
         int size = fileScanner.nextInt();
-        if( !Utils.isPowerOfTwo(size) ) {
-            throw new InvalidImageSpecificationException(size);
-        }
-
         int sideLength = (int) Math.sqrt(size);
         int[][] dataArray = new int[sideLength][sideLength];
 
-        //Pass dataArray reference to recursive decoder function
         new Decoder(fileScanner).decode(dataArray, size, 0, 0);
         return dataArray;
     }
@@ -62,14 +56,18 @@ public class RITQTCodec {
                             (int) (startCol + sqrtSizeDividedByTwo));
                 } else {
                     //Fill in pixel values.
-                    IntStream.range(startRow, startRow+ (int)sqrtSizeDividedByTwo *2 ).forEach(row -> {
-                        IntStream.range(startCol, startCol+(int)sqrtSizeDividedByTwo *2 ).forEach( col -> {
-                            dataArray[row][col] = val;
-                        });
-                    });
+                    //TODO: Create singleton thread pool class and add fill task to its queue for improved performance.
+                    fillDataArraySlice(dataArray, startRow, startCol, val, (int) sqrtSizeDividedByTwo);
                 }
             }
         }
 
+        private void fillDataArraySlice(int[][] dataArray, int startRow, int startCol, int val, int sqrtSizeDividedByTwo) {
+            IntStream.range(startRow, startRow + sqrtSizeDividedByTwo *2 ).forEach(row -> {
+                IntStream.range(startCol, startCol + sqrtSizeDividedByTwo *2 ).forEach(col -> {
+                    dataArray[row][col] = val;
+                });
+            });
+        }
     }
 }
