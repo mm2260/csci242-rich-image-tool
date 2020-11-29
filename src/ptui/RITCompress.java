@@ -26,16 +26,16 @@ public class RITCompress {
                     // not a power of two.
                     inputFile);
 
-//            for (int data : dataArray) {
-//                //for (int value : row) {
-//                    System.out.println(data);
-//                    writer.append(String.valueOf(data));
-//                    writer.newLine();
-//                //}
-//            }
-//
-//            writer.close();
-//            System.out.println("Output written to: " + args[1]);
+            for (int data : dataArray) {
+                //for (int value : row) {
+                    System.out.println(data);
+                    writer.append(String.valueOf(data));
+                    writer.newLine();
+                //}
+            }
+
+            writer.close();
+            System.out.println("Output written to: " + args[1]);
 
         } catch (IOException e) {
             System.out.println("Please make sure that desired input and output files / their directories exist.");

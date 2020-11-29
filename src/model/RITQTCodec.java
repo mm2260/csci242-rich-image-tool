@@ -23,7 +23,6 @@ public class RITQTCodec {
         int size = dataArray.size();
         int side = (int) Math.sqrt(size);
 
-        System.out.println(dataArray);
 
         int[][] twoDArray = new int[side][side];
 
@@ -32,16 +31,11 @@ public class RITQTCodec {
                 twoDArray[i][j] = dataArray.get(i*side+j);
             }
         }
-        System.out.println(side);
 
         RITQTNode root = compress(side,0,0,twoDArray);
-
-
         ArrayList<Integer> compressArray = new ArrayList<>();
         compressArray.add(size);
-        inorder(root,compressArray);
-        System.out.println(compressArray);
-
+        preorder(root,compressArray);
         return compressArray;
     }
 
@@ -60,66 +54,65 @@ public class RITQTCodec {
 
 
 
-    private ArrayList<Integer> inorder(RITQTNode ritqtNode, ArrayList<Integer> data){
+    private ArrayList<Integer> preorder(RITQTNode ritqtNode, ArrayList<Integer> data){
         if(ritqtNode!=null){
-            inorder(ritqtNode.getUpperLeft(),data);
-            inorder(ritqtNode.getUpperRight(),data);
-            inorder(ritqtNode.getLowerLeft(),data);
-            inorder(ritqtNode.getLowerRight(),data);
             data.add(ritqtNode.getVal());
+            preorder(ritqtNode.getUpperLeft(),data);
+            preorder(ritqtNode.getUpperRight(),data);
+            preorder(ritqtNode.getLowerLeft(),data);
+            preorder(ritqtNode.getLowerRight(),data);
         }
         return data;
     }
 
     public RITQTNode compress(int side, int startRow, int startCol, int[][] dataArray){
-        System.out.println(side+"  "+ dataArray[startRow][startCol]);
-        if(side<=1){
+        if(side==1){
             return new RITQTNode(dataArray[startRow][startCol]);
         }else{
-            int offset=side/2;
+            int fixedOffset=side/2;
             RITQTNode ul;
             RITQTNode ur;
             RITQTNode ll;
             RITQTNode lr;
-            if(checkIfEqual(offset,startRow,startCol,dataArray)){
+            if(checkIfEqual(fixedOffset,startRow,startCol,dataArray)){
                  ul = new RITQTNode(dataArray[startRow][startCol]);
             }else {
-                offset=offset/2;
+                int offset=fixedOffset/2;
                 ul = new RITQTNode(-1,
                         compress(offset,startRow,startCol,dataArray),
                         compress(offset,startRow,startCol+offset,dataArray),
                         compress(offset,startRow+offset,startCol,dataArray),
                         compress(offset,startRow+offset,startCol+offset,dataArray));
             }
-            if(checkIfEqual(offset,startRow,startCol+offset,dataArray)) {
-                ur = new RITQTNode(dataArray[startRow][startCol+offset]);
+            if(checkIfEqual(fixedOffset,startRow,startCol+fixedOffset,dataArray)) {
+                ur = new RITQTNode(dataArray[startRow][startCol+fixedOffset]);
             }else {
-                offset=offset/2;
+                int offset=fixedOffset/2;
                 ur = new RITQTNode(-1,
-                        compress(offset,startRow,startCol,dataArray),
-                        compress(offset,startRow,startCol+offset,dataArray),
-                        compress(offset,startRow+offset,startCol,dataArray),
-                        compress(offset,startRow+offset,startCol+offset,dataArray));
+                        compress(offset,startRow,startCol+fixedOffset,dataArray),
+                        compress(offset,startRow,startCol+fixedOffset+offset,dataArray),
+                        compress(offset,startRow+offset,startCol+fixedOffset,dataArray),
+                        compress(offset,startRow+offset,startCol+offset+fixedOffset,dataArray));
             }
-            if(checkIfEqual(offset,startRow+offset,startCol,dataArray)){
-                ll = new RITQTNode(dataArray[startRow+offset][startCol]);
+            if(checkIfEqual(fixedOffset,startRow+fixedOffset,startCol,dataArray)){
+                ll = new RITQTNode(dataArray[startRow+fixedOffset][startCol]);
             }else {
-                offset=offset/2;
+                int offset=fixedOffset/2;
                 ll = new RITQTNode(-1,
-                        compress(offset,startRow,startCol,dataArray),
-                        compress(offset,startRow,startCol+offset,dataArray),
-                        compress(offset,startRow+offset,startCol,dataArray),
-                        compress(offset,startRow+offset,startCol+offset,dataArray));
+                        compress(offset,startRow+fixedOffset,startCol,dataArray),
+                        compress(offset,startRow+fixedOffset,startCol+offset,dataArray),
+                        compress(offset,startRow+offset+fixedOffset,startCol,dataArray),
+                        compress(offset,startRow+offset+fixedOffset,startCol+offset,dataArray));
             }
-            if(checkIfEqual(offset,startRow+offset,startCol+offset,dataArray)){
-                lr = new RITQTNode(dataArray[startRow+offset][startCol+offset]);
+            if(checkIfEqual(fixedOffset,startRow+fixedOffset,startCol+fixedOffset,dataArray)){
+                lr = new RITQTNode(dataArray[startRow+fixedOffset][startCol+fixedOffset]);
             }else {
-                offset=offset/2;
+                int offset=fixedOffset/2;
                 lr = new RITQTNode(-1,
-                        compress(offset,startRow,startCol,dataArray),
-                        compress(offset,startRow,startCol+offset,dataArray),
-                        compress(offset,startRow+offset,startCol,dataArray),
-                        compress(offset,startRow+offset,startCol+offset,dataArray));
+                        compress(offset,startRow+fixedOffset,startCol+fixedOffset,dataArray),
+                        compress(offset,startRow+fixedOffset,startCol+offset+fixedOffset,dataArray),
+                        compress(offset,startRow+offset+fixedOffset,startCol+fixedOffset,dataArray),
+                        compress(offset,startRow+offset+fixedOffset,startCol+offset+fixedOffset,dataArray));
             }
 
             return new RITQTNode(-1,ul,ur,ll,lr);
@@ -135,7 +128,7 @@ public class RITQTCodec {
                 }
             }
         }
-        return false;
+        return true;
     }
 
     public int[][] decodeToArray( InputStream resource ) throws InvalidImageSpecificationException {
