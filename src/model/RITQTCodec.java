@@ -12,17 +12,7 @@ import java.util.stream.IntStream;
 //TODO: Add codec documentation.
 public class RITQTCodec {
 
-    public int[][] decodeToArray( InputStream resource ) {
-        Scanner fileScanner = new Scanner(resource);
 
-        //TODO: Move data loading responsibility to separate class.
-        int size = fileScanner.nextInt();
-        int sideLength = (int) Math.sqrt(size);
-        int[][] dataArray = new int[sideLength][sideLength];
-
-        new Decoder(fileScanner).decode(dataArray, size, 0, 0);
-        return dataArray;
-    }
 
     public void encodeToSystemOut( ) {
                 /* 2x2 base-case:
@@ -56,6 +46,18 @@ public class RITQTCodec {
 
         public Decoder(Scanner fileScanner) {
             this.fileScanner = fileScanner;
+        }
+
+        public int[][] decodeToArray( InputStream resource ) {
+            Scanner fileScanner = new Scanner(resource);
+
+            //TODO: Move data loading responsibility to separate class.
+            int size = fileScanner.nextInt();
+            int sideLength = (int) Math.sqrt(size);
+            int[][] dataArray = new int[sideLength][sideLength];
+
+            new Decoder(fileScanner).decode(dataArray, size, 0, 0);
+            return dataArray;
         }
 
         /**
