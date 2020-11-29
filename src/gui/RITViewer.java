@@ -26,6 +26,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 //TODO: add gui viewer documentation
@@ -49,13 +50,51 @@ public class RITViewer extends Application {
 //        Scene scene = new Scene( viewport, 512, 512 );
 
         RITQTNode quadTree = RITQTCodec.Decoder.parse( new ArrayList<Integer>(Arrays.asList(
-//                                                       -1, 120, 120, 255, -1, 0,0,0,0)) );
-//                                                       -1, 255, -1, 0, 60, 120, 255, 130, -1, 0, 50, 120, 200 )) );
-                                                        -1,-1,255,170,85,0,170,0,-1,-1,0,85,170,255,170,85,0)) );
+//                                                        -1,-1,255,170,85,0,170,0,-1,-1,0,85,170,255,170,85,0)) );
+                -1, 255, -1,-1,255,170,85,0,170,85,-1,0,85,170,255,-1,255,-1,255,170,85,0,-1,0,85,170,255,0 ,0)) );
+
+        List<Integer> rawData = new ArrayList<>(    Arrays.asList(255, 255, 255, 255, 255, 170, 170, 170, 255, 255, 255, 255, 85, 0,170,170,255,255,255,255,85,85,0,85,255,255,255,255,85,85,170,255,255,255,255,
+                170,
+                0,
+                0,
+                0,
+                0,
+                255,
+                255,
+                85,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                85,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                170,
+                255,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+        ) );
+        RITQTNode quadTree1 = new RITQTCodec.Encoder( rawData ).encode();
+
         Cell graphRoot = new Cell(quadTree);
         GraphLayout graphLayout = new GraphLayout(graphRoot);
-        Pane canvas = new Pane();
-        canvas.getChildren().add(graphLayout);
+
+        Cell graphRoot1 = new Cell(quadTree1);
+        GraphLayout graphLayout1 = new GraphLayout(graphRoot1);
+
+        VBox canvas = new VBox();
+        canvas.getChildren().addAll(graphLayout, graphLayout1);
+        canvas.setSpacing(50);
         InteractiveScrollPane viewport = new InteractiveScrollPane(canvas);
 
         Scene scene = new Scene( viewport, 512, 512 );

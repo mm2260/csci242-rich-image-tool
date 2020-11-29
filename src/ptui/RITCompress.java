@@ -1,5 +1,7 @@
 package ptui;
 
+import model.RITQTCodec;
+
 //TODO: add ptui compress documentation
 public class RITCompress {
     public static void main(String[] args) {
@@ -7,5 +9,8 @@ public class RITCompress {
             System.out.println("Usage: java RITCompress uncompressed-file.txt compressed-file.rit");
             return;
         }
+
+        new RITQTCodec().encodeToSystemOut();
     }
+
 }
