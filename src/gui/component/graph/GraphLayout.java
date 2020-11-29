@@ -4,35 +4,36 @@ import gui.component.graph.geometry.Cell;
 import gui.component.graph.geometry.Edge;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class GraphLayout extends Pane {
 
-    private static final double INTER_NODE_GAP = 20;
-    private static final double INTER_LEVEL_GAP = 30;
+    HBox rootContainer;
+    Cell root;
+
+    public static final double INTER_NODE_GAP = 20;
+    public static final double INTER_LEVEL_GAP = 30;
 
     private final List<Edge> edges = new ArrayList<>();
 
     public GraphLayout(Cell root) {
+        this.rootContainer = new HBox();
+        this.root = root;
 
-        HBox rootContainer = new HBox();
         generate(root, rootContainer);
 
         VBox verticalRootContainer = new VBox(root, rootContainer);
         configureContainer(verticalRootContainer, rootContainer);
 
-        getChildren().addAll(edges);
         getChildren().add(verticalRootContainer);
     }
 
-    public List<Edge> getEdges() { return edges; }
-
     private void generate( Cell root, HBox container ) {
+
         for(Cell child : root.getCellChildren()) {
 
             if (child.isLeaf() ) {
@@ -47,7 +48,6 @@ public class GraphLayout extends Pane {
                 configureContainer(innerVerticalContainer, innerContainer);
             }
 
-            edges.add( new Edge(root, child) );
             configureContainer(container);
         }
     }
@@ -56,7 +56,9 @@ public class GraphLayout extends Pane {
 
         if(container instanceof HBox ) {
             HBox hBox = (HBox) container;
+
             hBox.setSpacing(INTER_NODE_GAP);
+//            hBox.setBorder(new Border(new BorderStroke(Color.GREEN, BorderStrokeStyle.SOLID, null , null)));
         }
     }
 
@@ -69,7 +71,27 @@ public class GraphLayout extends Pane {
             vBox.setSpacing(INTER_LEVEL_GAP);
             vBox.setAlignment(Pos.CENTER);
             vBox.setMaxHeight( hBox.getHeight() );
+//            vBox.setBorder(new Border(new BorderStroke(Color.BLUE, BorderStrokeStyle.SOLID, null , null)));
         }
     }
 
+    public void calculateEdges() {
+        calculateEdges(this.root);
+        getChildren().addAll(edges);
+//        setOnMouseClicked( e-> {
+//            getChildren().add(edges.remove(0) );
+//        } );
+    }
+
+    private void calculateEdges(Cell root) {
+
+        for( Cell child : root.getCellChildren() ) {
+            if(child.isLeaf()) {
+                edges.add( new Edge(root, child) );
+            } else {
+                edges.add(new Edge(root, child));
+                calculateEdges(child);
+            }
+        }
+    }
 }

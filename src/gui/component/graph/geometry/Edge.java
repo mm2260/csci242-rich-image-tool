@@ -1,5 +1,6 @@
 package gui.component.graph.geometry;
 
+import gui.component.graph.GraphLayout;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
@@ -14,11 +15,16 @@ public class Edge extends Group {
 
         line = new Line();
 
-//        line.startYProperty().bind( source.layoutYProperty().add(source.getBoundsInParent().getHeight() / 2.0));
-//        line.startXProperty().bind( source.layoutXProperty().add(source.getBoundsInParent().getWidth() / 2.0));
-//
-//        line.endXProperty().bind( target.layoutXProperty().add( target.getBoundsInParent().getWidth() / 2.0));
-//        line.endYProperty().bind( target.layoutYProperty().add( target.getBoundsInParent().getHeight() / 2.0));
+        System.out.println(target);
+
+        Bounds srcBound = source.localToScene( source.getBoundsInLocal() );
+        Bounds targetBound = target.localToScene( target.getBoundsInLocal() );
+
+        line.startXProperty().setValue(srcBound.getCenterX() );
+        line.startYProperty().setValue(srcBound.getMaxY() );
+
+        line.endXProperty().setValue(targetBound.getCenterX());
+        line.endYProperty().setValue(targetBound.getMinY()-1);
 
         getChildren().add(line);
     }

@@ -49,7 +49,9 @@ public class RITViewer extends Application {
 //        Scene scene = new Scene( viewport, 512, 512 );
 
         RITQTNode quadTree = RITQTCodec.Decoder.parse( new ArrayList<Integer>(Arrays.asList(
-                                                       -1,155,-1, 255, 255, -1, 0, 33, 153, 20, 255,66,255)) );
+//                                                       -1, 120, 120, 255, -1, 0,0,0,0)) );
+//                                                       -1, 255, -1, 0, 60, 120, 255, 130, -1, 0, 50, 120, 200 )) );
+                                                        -1,-1,255,170,85,0,170,0,-1,-1,0,85,170,255,170,85,0)) );
         Cell graphRoot = new Cell(quadTree);
         GraphLayout graphLayout = new GraphLayout(graphRoot);
         Pane canvas = new Pane();
@@ -60,6 +62,7 @@ public class RITViewer extends Application {
         stage.setScene(scene);
         stage.show();
 
+        graphLayout.calculateEdges();
     }
 
     public static void main(String[] args) {

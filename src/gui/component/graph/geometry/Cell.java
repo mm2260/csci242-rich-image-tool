@@ -4,6 +4,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -16,14 +17,20 @@ import java.util.List;
 public class Cell extends Group {
 
     private final RITQTNode node;
+    private Node view;
+    private int depth;
 
     private List<Cell> children;
 
     public static final int CELL_SIZE = 30;
-    public Node view;
 
     public Cell(RITQTNode node) {
+        this(node, 0);
+    }
+
+    private Cell(RITQTNode node, int depth) {
         this.node = node;
+        this.depth = depth;
         addCellChildren();
 
         setView();
@@ -34,13 +41,15 @@ public class Cell extends Group {
         if(node.getVal()!=-1) {
             return;
         } else {
-            Cell ul = new Cell( node.getUpperLeft()  );
-            Cell ur = new Cell( node.getUpperRight() );
-            Cell ll = new Cell( node.getLowerLeft()  );
-            Cell lr = new Cell( node.getLowerRight() );
+            Cell ul = new Cell( node.getUpperLeft(), depth+1  );
+            Cell ur = new Cell( node.getUpperRight(), depth+1 );
+            Cell ll = new Cell( node.getLowerLeft(), depth+1  );
+            Cell lr = new Cell( node.getLowerRight(), depth+1 );
             this.children = new ArrayList<>(Arrays.asList(ul, ur, ll, lr) );
         }
     }
+
+    public int getDepth() { return this.depth; }
 
     private void setView() {
         int val = node.getVal();
@@ -52,11 +61,9 @@ public class Cell extends Group {
             container.setAlignment(Pos.CENTER);
             this.view = container;
         } else {
-            double size = CELL_SIZE / Math.sqrt(2);
-            Rectangle rect = new Rectangle( size, size );
-            rect.rotateProperty().setValue(45);
+            Rectangle rect = new Rectangle( CELL_SIZE, CELL_SIZE );
             rect.setStroke(Color.BLACK);
-            rect.setFill(Color.grayRgb(33));
+            rect.setFill(Color.RED);
             this.view = rect;
         }
     }
@@ -65,4 +72,8 @@ public class Cell extends Group {
 
     public boolean isLeaf() { return this.children==null; }
 
+    @Override
+    public String toString() {
+        return String.format("DEPTH: %d, VALUE: %d",depth, node.getVal());
+    }
 }
