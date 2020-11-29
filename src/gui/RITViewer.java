@@ -47,7 +47,7 @@ public class RITViewer extends Application {
             System.out.println("[-] File not found");
             System.exit(-1);
 
-        } catch (ValueOutOfBoundsException e ) {
+        } catch (ValueOutOfBoundsException e) {
             System.exit(-1);
 
         } catch (InvalidImageSpecificationException e ) {

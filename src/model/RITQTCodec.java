@@ -18,9 +18,6 @@ public class RITQTCodec {
         Scanner fileScanner = new Scanner(resource);
 
         int size = fileScanner.nextInt();
-        if( !Utils.isPowerOfTwo(size) ) {
-            throw new InvalidImageSpecificationException(size);
-        }
 
         int sideLength = (int) Math.sqrt(size);
         int[][] dataArray = new int[sideLength][sideLength];
