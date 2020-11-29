@@ -1,15 +1,16 @@
 package model;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.stream.IntStream;
 
 //TODO: Add codec documentation.
 public class RITQTCodec {
 
-    public RITQTNode encode(  ) {
-        //TODO: Implement encoding (recursive?)
-        return null;
+    private static class Encoder {
+
     }
 
     public int[][] decodeToArray( InputStream resource ) {
@@ -24,7 +25,7 @@ public class RITQTCodec {
         return dataArray;
     }
 
-    private static class Decoder {
+    public static class Decoder {
 
         private final Scanner fileScanner;
 
@@ -32,6 +33,32 @@ public class RITQTCodec {
             this.fileScanner = fileScanner;
         }
 
+        /**
+         * Parse Quad Tree object from a list of tokens.
+         * @param tokens integer value tokens
+         * @return Constructed quad-tree.
+         */
+        public static RITQTNode parse(List<Integer> tokens) {
+            int token = tokens.remove(0);
+            switch (token) {
+                case -1:
+                    RITQTNode ul = parse(tokens);
+                    RITQTNode ur = parse(tokens);
+                    RITQTNode ll = parse(tokens);
+                    RITQTNode lr = parse(tokens);
+                    return new RITQTNode( -1, ul, ur, ll, lr );
+                default:
+                    return new RITQTNode( token );
+            }
+        }
+
+        /**
+         * Decode raw encoded data to 2D data-array.
+         * @param dataArray data array for information to be stored in.
+         * @param size size of sub-section.
+         * @param startRow starting row coordinate of sub-section.
+         * @param startCol starting column coordinate of sub-section.
+         */
         private void decode(int[][] dataArray, int size, int startRow, int startCol) {
             int val = this.fileScanner.nextInt();
 
