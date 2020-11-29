@@ -137,7 +137,7 @@ public class RITQTCodec {
 
         public RITQTNode encode() {
             RITQTNode root = encode(initialSize, 0,0);
-            System.out.println(accumulator);
+            //System.out.println(accumulator);
             return root;
         }
 
