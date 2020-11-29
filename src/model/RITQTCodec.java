@@ -74,45 +74,139 @@ public class RITQTCodec {
             RITQTNode ur;
             RITQTNode ll;
             RITQTNode lr;
+
+
             if(checkIfEqual(fixedOffset,startRow,startCol,dataArray)){
                  ul = new RITQTNode(dataArray[startRow][startCol]);
             }else {
-                int offset=fixedOffset/2;
-                ul = new RITQTNode(-1,
-                        compress(offset,startRow,startCol,dataArray),
-                        compress(offset,startRow,startCol+offset,dataArray),
-                        compress(offset,startRow+offset,startCol,dataArray),
-                        compress(offset,startRow+offset,startCol+offset,dataArray));
+                int offset = fixedOffset / 2;
+                RITQTNode ul1;
+                RITQTNode ur1;
+                RITQTNode ll1;
+                RITQTNode lr1;
+
+                if(checkIfEqual(offset,startRow,startCol,dataArray)){
+                    ul1 = new RITQTNode(dataArray[startRow][startCol]);
+                }else {
+                    ul1 = compress(offset, startRow, startCol, dataArray);
+                }
+                if(checkIfEqual(offset,startRow,startCol+offset,dataArray)){
+                    ur1 = new RITQTNode(dataArray[startRow][startCol+offset]);
+                }else{
+                     ur1 = compress(offset, startRow, startCol + offset, dataArray);
+                }
+                if(checkIfEqual(offset,startRow + offset,startCol,dataArray)){
+                     ll1 = new RITQTNode(dataArray[startRow][startCol]);
+                }else {
+                     ll1 = compress(offset, startRow + offset, startCol, dataArray);
+                }
+                if(checkIfEqual(offset,startRow + offset,startCol + offset,dataArray)){
+                     lr1 = new RITQTNode(dataArray[startRow][startCol]);
+                }else{
+                     lr1 = compress(offset, startRow + offset, startCol + offset, dataArray);
+                }
+
+                ul = new RITQTNode(-1, ul1, ur1, ll1, lr1);
             }
+
+
             if(checkIfEqual(fixedOffset,startRow,startCol+fixedOffset,dataArray)) {
                 ur = new RITQTNode(dataArray[startRow][startCol+fixedOffset]);
             }else {
                 int offset=fixedOffset/2;
-                ur = new RITQTNode(-1,
-                        compress(offset,startRow,startCol+fixedOffset,dataArray),
-                        compress(offset,startRow,startCol+fixedOffset+offset,dataArray),
-                        compress(offset,startRow+offset,startCol+fixedOffset,dataArray),
-                        compress(offset,startRow+offset,startCol+offset+fixedOffset,dataArray));
+                RITQTNode ul1;
+                RITQTNode ur1;
+                RITQTNode ll1;
+                RITQTNode lr1;
+
+                if(checkIfEqual(offset,startRow,startCol+fixedOffset,dataArray)){
+                    ul1 = new RITQTNode(dataArray[startRow][(startCol+fixedOffset)]);
+                }else {
+                    ul1 = compress(offset,startRow,(startCol+fixedOffset),dataArray);
+                }
+                if(checkIfEqual(offset,startRow,(startCol+fixedOffset)+offset,dataArray)){
+                    ur1 = new RITQTNode(dataArray[startRow][(startCol+fixedOffset)+offset]);
+                }else{
+                    ur1 = compress(offset,startRow,(startCol+fixedOffset)+offset,dataArray);
+                }
+                if(checkIfEqual(offset,startRow+offset,(startCol+fixedOffset),dataArray)){
+                    ll1 = new RITQTNode(dataArray[startRow+offset][(startCol+fixedOffset)]);
+                }else {
+                    ll1 = compress(offset,startRow+offset,(startCol+fixedOffset),dataArray);
+                }
+                if(checkIfEqual(offset,startRow+offset,(startCol+fixedOffset)+offset,dataArray)){
+                    lr1 = new RITQTNode(dataArray[startRow+offset][(startCol+fixedOffset)+offset]);
+                }else{
+                    lr1 = compress(offset,startRow+offset,(startCol+fixedOffset)+offset,dataArray);
+                }
+                ur = new RITQTNode(-1, ul1, ur1, ll1, lr1);
             }
+
+
             if(checkIfEqual(fixedOffset,startRow+fixedOffset,startCol,dataArray)){
                 ll = new RITQTNode(dataArray[startRow+fixedOffset][startCol]);
             }else {
                 int offset=fixedOffset/2;
-                ll = new RITQTNode(-1,
-                        compress(offset,startRow+fixedOffset,startCol,dataArray),
-                        compress(offset,startRow+fixedOffset,startCol+offset,dataArray),
-                        compress(offset,startRow+offset+fixedOffset,startCol,dataArray),
-                        compress(offset,startRow+offset+fixedOffset,startCol+offset,dataArray));
+                RITQTNode ul1;
+                RITQTNode ur1;
+                RITQTNode ll1;
+                RITQTNode lr1;
+
+                if(checkIfEqual(offset,(startRow+fixedOffset),startCol,dataArray)){
+                    ul1 = new RITQTNode(dataArray[(startRow+fixedOffset)][startCol]);
+                }else {
+                    ul1 = compress(offset,(startRow+fixedOffset),startCol,dataArray);
+                }
+                if(checkIfEqual(offset,(startRow+fixedOffset),startCol+offset,dataArray)){
+                    ur1 = new RITQTNode(dataArray[(startRow+fixedOffset)][startCol+offset]);
+                }else{
+                    ur1 = compress(offset,(startRow+fixedOffset),startCol+offset,dataArray);
+                }
+                if(checkIfEqual(offset,(startRow+fixedOffset)+offset,startCol,dataArray)){
+                    ll1 = new RITQTNode(dataArray[(startRow+fixedOffset)+offset][startCol]);
+                }else {
+                    ll1 = compress(offset,(startRow+fixedOffset)+offset,startCol,dataArray);
+                }
+                if(checkIfEqual(offset,(startRow+fixedOffset)+offset,startCol+offset,dataArray)){
+                    lr1 = new RITQTNode(dataArray[(startRow+fixedOffset)+offset][startCol+offset]);
+                }else{
+                    lr1 = compress(offset,(startRow+fixedOffset)+offset,startCol+offset,dataArray);
+                }
+                ll = new RITQTNode(-1, ul1, ur1, ll1, lr1);
             }
+
+
             if(checkIfEqual(fixedOffset,startRow+fixedOffset,startCol+fixedOffset,dataArray)){
                 lr = new RITQTNode(dataArray[startRow+fixedOffset][startCol+fixedOffset]);
             }else {
                 int offset=fixedOffset/2;
-                lr = new RITQTNode(-1,
-                        compress(offset,startRow+fixedOffset,startCol+fixedOffset,dataArray),
-                        compress(offset,startRow+fixedOffset,startCol+offset+fixedOffset,dataArray),
-                        compress(offset,startRow+offset+fixedOffset,startCol+fixedOffset,dataArray),
-                        compress(offset,startRow+offset+fixedOffset,startCol+offset+fixedOffset,dataArray));
+                RITQTNode ul1;
+                RITQTNode ur1;
+                RITQTNode ll1;
+                RITQTNode lr1;
+
+                if(checkIfEqual(offset,(startRow+fixedOffset),(startCol+fixedOffset),dataArray)){
+                    ul1 = new RITQTNode(dataArray[(startRow+fixedOffset)][(startCol+fixedOffset)]);
+                }else {
+                    ul1 = compress(offset,(startRow+fixedOffset),(startCol+fixedOffset),dataArray);
+                }
+                if(checkIfEqual(offset,(startRow+fixedOffset),(startCol+fixedOffset)+offset,dataArray)){
+                    ur1 = new RITQTNode(dataArray[(startRow+fixedOffset)][(startCol+fixedOffset)+offset]);
+                }else{
+                    ur1 =  compress(offset,(startRow+fixedOffset),(startCol+fixedOffset)+offset,dataArray);
+                }
+                if(checkIfEqual(offset,(startRow+fixedOffset)+offset,(startCol+fixedOffset),dataArray)){
+                    ll1 = new RITQTNode(dataArray[(startRow+fixedOffset)+offset][(startCol+fixedOffset)]);
+                }else {
+                    ll1 = compress(offset,startRow+offset+fixedOffset,(startCol+fixedOffset),dataArray);
+                }
+                if(checkIfEqual(offset,(startRow+fixedOffset)+offset,(startCol+fixedOffset)+offset,dataArray)){
+                    lr1 = new RITQTNode(dataArray[(startRow+fixedOffset)+offset][(startCol+fixedOffset)+offset]);
+                }else{
+                    lr1 = compress(offset,startRow+offset+fixedOffset,(startCol+fixedOffset)+offset,dataArray);
+                }
+
+                lr = new RITQTNode(-1,ul1, ur1, ll1, lr1);
             }
 
             return new RITQTNode(-1,ul,ur,ll,lr);
