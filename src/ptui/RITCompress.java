@@ -23,9 +23,9 @@ public class RITCompress {
             //Loading files and such may throw IO exceptions which are handled below.
             InputStream inputFile = new FileInputStream(args[0]);
             BufferedWriter writer = new BufferedWriter(new FileWriter(args[1]));
-            Scanner sc = new Scanner(new File(args[0]));
-            System.out.println("Compressing: " + args[0]);
-
+//            Scanner sc = new Scanner(new File(args[0]));
+//            System.out.println("Compressing: " + args[0]);
+//
 //            RITQTCodec codec = new RITQTCodec();
 //            ArrayList<Integer> dataArray = new ArrayList<>();
 //            //Codec takes InputStream as parameter and returns raw pixel data as a 2D-Array.
