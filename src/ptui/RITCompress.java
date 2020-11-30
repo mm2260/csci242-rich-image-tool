@@ -1,7 +1,7 @@
 package ptui;
 
 import model.RITQTCodec;
-import model.exceptions.InvalidImageSpecificationException;
+//import model.exceptions.InvalidImageSpecificationException;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -24,12 +24,12 @@ public class RITCompress {
             System.out.println("Please make sure that desired input and output files / their directories exist.");
             System.out.println(e.toString());
             e.printStackTrace();
-        } catch (InvalidImageSpecificationException e) {
+        } /*catch (InvalidImageSpecificationException e) {
             System.out.println("The image specification is invalid -- image size is not a power of 2.");
             e.printStackTrace();
-        }
+        }*/
 
-        new RITQTCodec().encodeToSystemOut();
+//        new RITQTCodec().encodeToSystemOut();
     }
 
 }

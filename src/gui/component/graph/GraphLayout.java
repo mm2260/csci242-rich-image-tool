@@ -8,7 +8,6 @@ import javafx.scene.layout.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class GraphLayout extends Pane {
 
@@ -33,6 +32,9 @@ public class GraphLayout extends Pane {
     }
 
     private void generate( Cell root, HBox container ) {
+
+        if(root.isLeaf())
+            return;
 
         for(Cell child : root.getCellChildren()) {
 
@@ -75,22 +77,22 @@ public class GraphLayout extends Pane {
         }
     }
 
-    public void calculateEdges() {
-        calculateEdges(this.root);
+    public void showEdges() {
+        showEdges(this.root);
         getChildren().addAll(edges);
-//        setOnMouseClicked( e-> {
-//            getChildren().add(edges.remove(0) );
-//        } );
     }
 
-    private void calculateEdges(Cell root) {
+    private void showEdges(Cell root) {
 
+        if(root.isLeaf()){
+            return;
+        }
         for( Cell child : root.getCellChildren() ) {
             if(child.isLeaf()) {
                 edges.add( new Edge(root, child) );
             } else {
                 edges.add(new Edge(root, child));
-                calculateEdges(child);
+                showEdges(child);
             }
         }
     }
