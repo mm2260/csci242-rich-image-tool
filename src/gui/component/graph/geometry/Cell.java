@@ -4,7 +4,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -48,8 +47,6 @@ public class Cell extends Group {
             this.children = new ArrayList<>(Arrays.asList(ul, ur, ll, lr) );
         }
     }
-
-    public int getDepth() { return this.depth; }
 
     private void setView() {
         int val = node.getVal();

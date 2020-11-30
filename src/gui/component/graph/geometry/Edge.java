@@ -12,21 +12,24 @@ public class Edge extends Group {
     Line line;
 
     public Edge(Cell source, Cell target) {
+        this(source, target, new Point2D(0,0));
+    }
+
+    public Edge(Cell source, Cell target, Point2D offset) {
 
         line = new Line();
 
-        System.out.println(target);
+//        System.out.println(target);
 
         Bounds srcBound = source.localToScene( source.getBoundsInLocal() );
         Bounds targetBound = target.localToScene( target.getBoundsInLocal() );
 
-        line.startXProperty().setValue(srcBound.getCenterX() );
-        line.startYProperty().setValue(srcBound.getMaxY() );
+        line.startXProperty().setValue(srcBound.getCenterX()-offset.getX() );
+        line.startYProperty().setValue(srcBound.getMaxY()-offset.getY() );
 
-        line.endXProperty().setValue(targetBound.getCenterX());
-        line.endYProperty().setValue(targetBound.getMinY()-1);
+        line.endXProperty().setValue(targetBound.getCenterX()-offset.getX());
+        line.endYProperty().setValue(targetBound.getMinY()-1-offset.getY());
 
         getChildren().add(line);
     }
-
 }
