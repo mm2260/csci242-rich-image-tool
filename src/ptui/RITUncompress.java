@@ -14,15 +14,15 @@ public class RITUncompress {
             System.out.println("Usage: java RITUncompress compressed.rit uncompressed.txt");
             return;
         }
-        try {
+//        try {
 
             //Loading files and such may throw IO exceptions which are handled below.
-            InputStream inputFile = new FileInputStream(args[0]);
-            Scanner scanner = new Scanner(new File(args[0]));
-            ArrayList<Integer> input = new ArrayList<>();
-            while(scanner.hasNextInt()){
-                input.add(scanner.nextInt());
-            }
+//            InputStream inputFile = new FileInputStream(args[0]);
+//            Scanner scanner = new Scanner(new File(args[0]));
+//            ArrayList<Integer> input = new ArrayList<>();
+//            while(scanner.hasNextInt()){
+//                input.add(scanner.nextInt());
+//            }
 
 //            System.out.println("Uncompressing: " + args[0]);
 //

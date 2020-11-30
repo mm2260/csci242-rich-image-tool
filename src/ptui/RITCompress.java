@@ -65,15 +65,15 @@ public class RITCompress {
     }
 
 
-    private static ArrayList<Integer> preorder(RITQTNode ritqtNode, ArrayList<Integer> data){
-        if(ritqtNode!=null){
-            data.add(ritqtNode.getVal());
-            preorder(ritqtNode.getUpperLeft(),data);
-            preorder(ritqtNode.getUpperRight(),data);
-            preorder(ritqtNode.getLowerLeft(),data);
-            preorder(ritqtNode.getLowerRight(),data);
-        }
-        return data;
-    }
+//    private static ArrayList<Integer> preorder(RITQTNode ritqtNode, ArrayList<Integer> data){
+//        if(ritqtNode!=null){
+//            data.add(ritqtNode.getVal());
+//            preorder(ritqtNode.getUpperLeft(),data);
+//            preorder(ritqtNode.getUpperRight(),data);
+//            preorder(ritqtNode.getLowerLeft(),data);
+//            preorder(ritqtNode.getLowerRight(),data);
+//        }
+//        return data;
+//    }
 
 }

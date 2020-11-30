@@ -9,16 +9,15 @@ public class RITQuadTree {
     DataArray imageData;
     List<Integer> representation;
 
-    RITQuadTree(RITQTNode root, DataArray imageData, List<Integer> representation) {
+    public RITQuadTree(RITQTNode root, DataArray imageData) {
         this.root = root;
         this.imageData = imageData;
-        this.representation = representation;
+        this.representation = new ArrayList<>();
     }
 
-    public RITQTNode getRoot() {
-        return this.root;
-    }
+    public RITQTNode getRoot() { return this.root; }
     public DataArray getImageData() { return this.imageData; }
+    public List<Integer> getRepresentation() { return this.representation; }
 
     @Override
     public String toString() {
@@ -45,13 +44,8 @@ public class RITQuadTree {
         public int get(int row, int col) {
             return data.get( row*size+col );
         }
-
         public void set(int row, int col, int value) {
             data.set( row*size+col, value );
-        }
-
-        public List<Integer> copyData() {
-            return new ArrayList<>( this.data );
         }
 
         public void lock() {this.locked=true;}
