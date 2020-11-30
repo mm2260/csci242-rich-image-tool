@@ -70,4 +70,6 @@ public class RITViewer extends Application {
         }
         return grayscaleImage;
     }
+
+
 }
