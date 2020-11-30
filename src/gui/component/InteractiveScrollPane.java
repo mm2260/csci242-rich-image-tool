@@ -3,11 +3,16 @@ package gui.component;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
+import javafx.geometry.Bounds;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.*;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.transform.Scale;
 
 //TODO: add interactive scroll pane documentation
@@ -30,6 +35,7 @@ public class InteractiveScrollPane extends ScrollPane {
         this.content = content;
         this.innerRoot = new Group();
         Group contentGroup = new Group();
+
         contentGroup.getChildren().add(innerRoot);
         innerRoot.getChildren().add(content);
         setContent(contentGroup);
@@ -42,6 +48,15 @@ public class InteractiveScrollPane extends ScrollPane {
 
         innerRoot.setOnScroll(onScrollEventHandler);
 
+    }
+
+    public VBox getCentered() {
+        HBox horizontalAxis = new HBox(this);
+        VBox verticalAxis = new VBox(horizontalAxis);
+        horizontalAxis.setAlignment(Pos.CENTER);
+        verticalAxis.setAlignment(Pos.CENTER);
+        verticalAxis.minWidthProperty().bind( this.prefViewportWidthProperty() );
+        return verticalAxis;
     }
 
     private final EventHandler<ScrollEvent> onScrollEventHandler = new EventHandler<ScrollEvent>() {

@@ -9,40 +9,15 @@ public class RITQuadTree {
     DataArray imageData;
     List<Integer> representation;
 
-    public RITQuadTree(RITQTNode root, DataArray imageData, List<Integer> representation) {
+    public RITQuadTree(RITQTNode root, DataArray imageData) {
         this.root = root;
         this.imageData = imageData;
-        this.representation = representation;
+        this.representation = new ArrayList<>();
     }
 
     public RITQTNode getRoot() { return this.root; }
     public DataArray getImageData() { return this.imageData; }
-    public List<Integer> getRepresentation() {
-        if(representation.size()!=0) {
-            return this.representation;
-        } else {
-            representation.add( (int) Math.pow(imageData.size,2));
-            generateRepresenation(root);
-            return this.representation;
-        }
-    }
-
-    private void generateRepresenation(RITQTNode root) {
-        if(root.getLowerLeft()==root.getLowerRight() &&
-                root.getLowerRight()==root.getUpperLeft() &&
-                root.getUpperLeft()==root.getUpperRight() &&
-                root.getUpperRight()== null) {
-
-            representation.add(root.getVal());
-        }
-        else {
-            representation.add(-1);
-            generateRepresenation(root.getUpperLeft());
-            generateRepresenation(root.getUpperRight());
-            generateRepresenation(root.getLowerLeft());
-            generateRepresenation(root.getLowerRight());
-        }
-    }
+    public List<Integer> getRepresentation() { return this.representation; }
 
     @Override
     public String toString() {
@@ -69,13 +44,8 @@ public class RITQuadTree {
         public int get(int row, int col) {
             return data.get( row*size+col );
         }
-
         public void set(int row, int col, int value) {
             data.set( row*size+col, value );
-        }
-
-        public List<Integer> copyData() {
-            return new ArrayList<>( this.data );
         }
 
         public void lock() {this.locked=true;}

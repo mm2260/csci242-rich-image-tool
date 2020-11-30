@@ -11,7 +11,10 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.IntStream;
 
-//TODO: Add codec documentation.
+/**
+ *   Decoder: [ Raw Compressed Data ==>       QuadTree       ] : [ un-compress ]
+ *   Encoder: [      QuadTree       ==>  Raw Compressed Data ] : [  compress   ]
+ */
 public class RITQTCodec {
 
     /**
@@ -23,7 +26,7 @@ public class RITQTCodec {
     public static RITQuadTree importFile( String fileName ) throws FileNotFoundException {
         DataArray imageData = FileHandler.getDataArray(fileName);
         Decoder decoder = new Decoder(imageData);
-        return decoder.decode();
+        return Encoder.encode(decoder.decode());
     }
 
     /**
@@ -34,23 +37,39 @@ public class RITQTCodec {
      */
     public static RITQuadTree openFile( String fileName ) throws FileNotFoundException {
         Decoder decoder = new Decoder(FileHandler.getInputStream(fileName));
-        return decoder.decode();
+        return Encoder.encode(decoder.decode());
     }
-
-    /*
-    *   Decoder: [ File       ==>  QuadTree ] : [ un-compress ]
-    *   Encoder: [ QuadTree   ==>  File     ] : [  compress   ]
-    */
 
     public static class Encoder {
 
+        public static RITQuadTree encode(RITQuadTree quadTree) {
+            quadTree.getRepresentation().add((int) Math.pow(quadTree.imageData.getSize(),2));
+            generateRepresenation(quadTree.root, quadTree.getRepresentation());
+            return quadTree;
+        }
+
+        private static void generateRepresenation(RITQTNode root, List<Integer> accumulator) {
+            if(root.getLowerLeft()==root.getLowerRight() &&
+                    root.getLowerRight()==root.getUpperLeft() &&
+                    root.getUpperLeft()==root.getUpperRight() &&
+                    root.getUpperRight()== null) {
+
+                accumulator.add(root.getVal());
+            }
+            else {
+                accumulator.add(-1);
+                generateRepresenation( root.getUpperLeft(),accumulator  );
+                generateRepresenation( root.getUpperRight(),accumulator );
+                generateRepresenation( root.getLowerLeft(),accumulator  );
+                generateRepresenation( root.getLowerRight(),accumulator );
+            }
+        }
     }
 
     public static class Decoder {
 
         private final Scanner fileScanner;
         private final DataArray dataArray;
-        private final List<Integer> accumulator;
         private final int initialSize;
 
         /**
@@ -59,7 +78,6 @@ public class RITQTCodec {
          */
         public Decoder(InputStream resource) {
             this.fileScanner = new Scanner(resource);
-            this.accumulator = new ArrayList<>();
             this.dataArray = uncompress();
             this.initialSize = dataArray.getLength();
         }
@@ -70,7 +88,6 @@ public class RITQTCodec {
          */
         public Decoder(DataArray rawData ) {
             this.fileScanner = null;
-            this.accumulator = new ArrayList<>();
             this.dataArray = rawData;
             this.initialSize = dataArray.getLength();
         }
@@ -118,7 +135,7 @@ public class RITQTCodec {
          */
         public RITQuadTree decode() {
             RITQTNode root = decode(initialSize, 0,0);
-            return new RITQuadTree(root, this.dataArray, accumulator);
+            return new RITQuadTree(root, this.dataArray);
         }
 
         /**
