@@ -3,17 +3,11 @@ package gui.component;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.*;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.paint.Color;
 import javafx.scene.transform.Scale;
 
 //TODO: add interactive scroll pane documentation
@@ -54,10 +48,6 @@ public class InteractiveScrollPane extends ScrollPane {
         @Override
         public void handle(ScrollEvent scrollEvent) {
 
-            //TODO: add resampling: nearest neighbor? + Convert to canvas?
-
-//            System.out.println(scale);
-
             if(scrollEvent.getDeltaY() < 0 ) {
                 scale.setValue( clamp(scale.get()-delta, MAX_SCALE, MIN_SCALE) );
             } else {
@@ -67,19 +57,6 @@ public class InteractiveScrollPane extends ScrollPane {
             scrollEvent.consume();
         }
     };
-//
-//    private void resample() {
-//        ImageView oldImageContent = (ImageView) content;
-//        content = new ImageView(resample( oldImageContent.getImage(), (int) scale.get()));
-//
-//        Group contentGroup = new Group();
-//        contentGroup.getChildren().add(innerRoot);
-//        innerRoot.getChildren().removeAll();
-//        innerRoot.getChildren().add(content);
-//
-//        setContent(contentGroup);
-//        scale.setValue(1);
-//    }
 
     private Image resample(Image input, int scaleFactor) {
         final int W = (int) input.getWidth();

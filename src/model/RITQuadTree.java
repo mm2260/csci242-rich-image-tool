@@ -1,7 +1,6 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class RITQuadTree {
@@ -19,6 +18,7 @@ public class RITQuadTree {
     public RITQTNode getRoot() {
         return this.root;
     }
+    public DataArray getImageData() { return this.imageData; }
 
     @Override
     public String toString() {
@@ -40,6 +40,7 @@ public class RITQuadTree {
         }
 
         public int getLength() { return this.length; }
+        public int getSize() {return this.size;}
 
         public int get(int row, int col) {
             return data.get( row*size+col );

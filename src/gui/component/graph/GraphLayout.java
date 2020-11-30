@@ -2,6 +2,8 @@ package gui.component.graph;
 
 import gui.component.graph.geometry.Cell;
 import gui.component.graph.geometry.Edge;
+import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.*;
@@ -78,21 +80,25 @@ public class GraphLayout extends Pane {
     }
 
     public void showEdges() {
-        showEdges(this.root);
+        Bounds boundsInParent = this.getBoundsInParent();
+        showEdges( new Point2D(boundsInParent.getMinX(), boundsInParent.getMinY()) );
+    }
+
+    public void showEdges(Point2D offset) {
+        createEdges(this.root, offset);
         getChildren().addAll(edges);
     }
 
-    private void showEdges(Cell root) {
-
+    private void createEdges(Cell root, Point2D offset) {
         if(root.isLeaf()){
             return;
         }
         for( Cell child : root.getCellChildren() ) {
             if(child.isLeaf()) {
-                edges.add( new Edge(root, child) );
+                edges.add( new Edge(root, child, offset) );
             } else {
-                edges.add(new Edge(root, child));
-                showEdges(child);
+                edges.add(new Edge(root, child, offset));
+                createEdges(child, offset);
             }
         }
     }
