@@ -14,14 +14,22 @@ import java.util.stream.IntStream;
 //TODO: Add codec documentation.
 public class RITQTCodec {
 
-    public static RITQuadTree importFile( String fileName ) {
-        return null;
+    /**
+     * Open a .txt file.
+     * @param fileName File name (XYZ.txt)
+     * @return Quad Tree representation of file data.
+     * @throws FileNotFoundException
+     */
+    public static RITQuadTree importFile( String fileName ) throws FileNotFoundException {
+        DataArray imageData = FileHandler.getDataArray(fileName);
+        Decoder decoder = new Decoder(imageData);
+        return decoder.decode();
     }
 
     /**
      * Open a .rit file.
      * @param fileName File Name (XYZ.rit)
-     * @return Quad Tree representation of file data.
+     * @return Quad Tree representation of uncompressed file data.
      * @throws FileNotFoundException
      */
     public static RITQuadTree openFile( String fileName ) throws FileNotFoundException {
@@ -46,13 +54,24 @@ public class RITQTCodec {
         private final int initialSize;
 
         /**
-         * Constructor for the decoder.
+         * Constructor for the decoder. Un-compresses dataArray from a compressed inputStream (.rit file).
          * @param resource input stream to pull data from.
          */
         public Decoder(InputStream resource) {
             this.fileScanner = new Scanner(resource);
             this.accumulator = new ArrayList<>();
             this.dataArray = uncompress();
+            this.initialSize = dataArray.getLength();
+        }
+
+        /**
+         * Constructor for the decoder.
+         * @param rawData
+         */
+        public Decoder(DataArray rawData ) {
+            this.fileScanner = null;
+            this.accumulator = new ArrayList<>();
+            this.dataArray = rawData;
             this.initialSize = dataArray.getLength();
         }
 
@@ -195,6 +214,17 @@ public class RITQTCodec {
     }
 
     private static class FileHandler {
+
+        public static DataArray getDataArray(String filename) throws FileNotFoundException {
+            Scanner fileScanner = new Scanner( getInputStream(filename) );
+            List<Integer> rawData = new ArrayList<>();
+            while(fileScanner.hasNext()) { rawData.add( nextValue(fileScanner) ); }
+            return new DataArray(rawData);
+        }
+
+        private static int nextValue(Scanner fileScanner) {
+            return Integer.parseInt( fileScanner.nextLine() );
+        }
 
         public static InputStream getInputStream(String filename) throws FileNotFoundException {
             return new FileInputStream(filename);
