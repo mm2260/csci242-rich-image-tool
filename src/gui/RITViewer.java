@@ -27,7 +27,7 @@ public class RITViewer extends Application {
 
         RITQuadTree quadTree = RITQTCodec.importFile( getParameters().getRaw().get(0) );
         ImageView diagram = new QuadTreeImageView( quadTree );
-        GraphLayout graphLayout = new GraphLayout( new Cell(quadTree.getRoot()));
+        GraphLayout graphLayout = new GraphLayout( new Cell(quadTree.getRoot()) );
         InteractiveScrollPane viewport = new InteractiveScrollPane(graphLayout);
 
         Scene scene = new Scene(viewport.getCentered(), 512,  512);

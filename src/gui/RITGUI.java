@@ -176,13 +176,24 @@ public class RITGUI extends Application {
 
     private void configureGenerateGraphButton(Button generateGraphButton, TabPane tabPane, VBox inspector) {
 
+        generateGraphButton.prefWidthProperty().bind(inspector.widthProperty());
         generateGraphButton.setOnAction( e -> {
             Tab graphTab = new Tab("Graph Represenation");
 
             GraphLayout graphLayout = new GraphLayout( new Cell(buffer.quadTree.getRoot()) );
-            graphTab.setContent( new InteractiveScrollPane(graphLayout).getCentered() );
             tabPane.getTabs().add(graphTab);
             tabPane.getSelectionModel().select(graphTab);
+            graphTab.setContent( new InteractiveScrollPane(graphLayout).getCentered() );
+//            Platform.runLater(graphLayout::showEdges);
+//            try {
+//                RITQuadTree quadTree = buffer.quadTree;
+//                GraphLayout graphLayout = new GraphLayout( new Cell(quadTree.getRoot()) );
+//                InteractiveScrollPane viewport = new InteractiveScrollPane(graphLayout);
+//                graphTab.setContent(viewport.getCentered());
+//                tabPane.getTabs().add(graphTab);
+//                tabPane.getSelectionModel().select(graphTab);
+//            } catch (Exception exception ) { ExceptionHandler.handle(exception); }
+
         } );
 
         inspector.getChildren().add(generateGraphButton);

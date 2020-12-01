@@ -61,7 +61,9 @@ public class Cell extends Group {
             Rectangle rect = new Rectangle( CELL_SIZE, CELL_SIZE );
             rect.setStroke(Color.BLACK);
             rect.setFill(Color.RED);
-            this.view = rect;
+            VBox container = new VBox(rect, new Label(""));
+            container.setAlignment(Pos.CENTER);
+            this.view = container;
         }
     }
 

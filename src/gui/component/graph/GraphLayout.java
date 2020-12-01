@@ -3,7 +3,9 @@ package gui.component.graph;
 import gui.component.graph.geometry.Cell;
 import gui.component.graph.geometry.Edge;
 import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Bounds;
+import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -31,9 +33,9 @@ public class GraphLayout extends Pane {
         VBox verticalRootContainer = new VBox(root, rootContainer);
         configureContainer(verticalRootContainer, rootContainer);
 
+        createEdges(this.root);
+        getChildren().addAll(edges);
         getChildren().add(verticalRootContainer);
-
-        Platform.runLater( this::showEdges );
     }
 
     private void generate( Cell root, HBox container ) {
@@ -63,7 +65,7 @@ public class GraphLayout extends Pane {
 
         if(container instanceof HBox ) {
             HBox hBox = (HBox) container;
-
+            hBox.setAlignment(Pos.TOP_CENTER);
             hBox.setSpacing(INTER_NODE_GAP);
 //            hBox.setBorder(new Border(new BorderStroke(Color.GREEN, BorderStrokeStyle.SOLID, null , null)));
         }
@@ -76,35 +78,23 @@ public class GraphLayout extends Pane {
             HBox hBox = (HBox) innerContainer;
 
             vBox.setSpacing(INTER_LEVEL_GAP);
-            vBox.setAlignment(Pos.CENTER);
+            vBox.setPadding( new Insets( 5,5,5,5 ));
+            vBox.setAlignment(Pos.TOP_CENTER);
             vBox.setMaxHeight( hBox.getHeight() );
 //            vBox.setBorder(new Border(new BorderStroke(Color.BLUE, BorderStrokeStyle.SOLID, null , null)));
         }
     }
 
-    public void showEdges() {
-        Bounds boundsInParent = this.getBoundsInParent();
-        double offsetX = boundsInParent.getMinX() + 10;
-//        double offsetY = boundsInParent.getMinY();
-        double offsetY = boundsInParent.getMinY() + this.getHeight();
-        showEdges( new Point2D( offsetX, offsetY) );
-    }
-
-    public void showEdges(Point2D offset) {
-        createEdges(this.root, offset);
-        getChildren().addAll(edges);
-    }
-
-    private void createEdges(Cell root, Point2D offset) {
+    private void createEdges(Cell root) {
         if(root.isLeaf()){
             return;
         }
         for( Cell child : root.getCellChildren() ) {
             if(child.isLeaf()) {
-                edges.add( new Edge(root, child, offset) );
+                edges.add( new Edge(root, child, this) );
             } else {
-                edges.add(new Edge(root, child, offset));
-                createEdges(child, offset);
+                edges.add(new Edge(root, child, this));
+                createEdges(child);
             }
         }
     }
