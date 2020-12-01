@@ -2,6 +2,7 @@ package gui.component.graph;
 
 import gui.component.graph.geometry.Cell;
 import gui.component.graph.geometry.Edge;
+import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -31,6 +32,8 @@ public class GraphLayout extends Pane {
         configureContainer(verticalRootContainer, rootContainer);
 
         getChildren().add(verticalRootContainer);
+
+        Platform.runLater( this::showEdges );
     }
 
     private void generate( Cell root, HBox container ) {
@@ -81,7 +84,10 @@ public class GraphLayout extends Pane {
 
     public void showEdges() {
         Bounds boundsInParent = this.getBoundsInParent();
-        showEdges( new Point2D(boundsInParent.getMinX(), boundsInParent.getMinY()) );
+        double offsetX = boundsInParent.getMinX() + 10;
+//        double offsetY = boundsInParent.getMinY();
+        double offsetY = boundsInParent.getMinY() + this.getHeight();
+        showEdges( new Point2D( offsetX, offsetY) );
     }
 
     public void showEdges(Point2D offset) {

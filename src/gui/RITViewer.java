@@ -2,6 +2,8 @@ package gui;
 
 import gui.component.InteractiveScrollPane;
 import gui.component.QuadTreeImageView;
+import gui.component.graph.GraphLayout;
+import gui.component.graph.geometry.Cell;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -25,7 +27,8 @@ public class RITViewer extends Application {
 
         RITQuadTree quadTree = RITQTCodec.importFile( getParameters().getRaw().get(0) );
         ImageView diagram = new QuadTreeImageView( quadTree );
-        InteractiveScrollPane viewport = new InteractiveScrollPane(diagram);
+        GraphLayout graphLayout = new GraphLayout( new Cell(quadTree.getRoot()));
+        InteractiveScrollPane viewport = new InteractiveScrollPane(graphLayout);
 
         Scene scene = new Scene(viewport.getCentered(), 512,  512);
         stage.setScene(scene);
