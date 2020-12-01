@@ -2,13 +2,8 @@ package model;
 
 import model.RITQuadTree.DataArray;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.io.*;
+import java.util.*;
 import java.util.stream.IntStream;
 
 /**
@@ -40,6 +35,20 @@ public class RITQTCodec {
         return Encoder.encode(decoder.decode());
     }
 
+    public static void exportCompressed( String fileName, RITQuadTree quadTree ) throws IOException {
+        export(fileName, quadTree.representation);
+    }
+
+    public static void exportUncompressed( String fileName, RITQuadTree quadTree ) throws IOException {
+        export(fileName, quadTree.imageData.data);
+    }
+
+    private static void export(String fileName, List<Integer> data) throws IOException {
+        BufferedWriter bufferedWriter = FileHandler.getFileWriter(fileName);
+        System.out.println(data);
+        FileHandler.writeLines(bufferedWriter, data);
+        bufferedWriter.close();
+    }
     public static class Encoder {
 
         public static RITQuadTree encode(RITQuadTree quadTree) {
@@ -239,12 +248,24 @@ public class RITQTCodec {
             return new DataArray(rawData);
         }
 
-        private static int nextValue(Scanner fileScanner) {
-            return Integer.parseInt( fileScanner.nextLine() );
-        }
-
         public static InputStream getInputStream(String filename) throws FileNotFoundException {
             return new FileInputStream(filename);
+        }
+
+        public static BufferedWriter getFileWriter(String filename) throws IOException {
+            return new BufferedWriter( new FileWriter(filename) );
+        }
+
+        public static void writeLines(BufferedWriter bufferedWriter, List<Integer> representation) throws IOException {
+            for(int i = 0; i<representation.size()-1;++i ) {
+                bufferedWriter.write( String.valueOf(representation.get(i)) );
+                bufferedWriter.newLine();
+            }
+            bufferedWriter.write( String.valueOf( representation.get( representation.size()-1 ) ) );
+        }
+
+        private static int nextValue(Scanner fileScanner) {
+            return Integer.parseInt( fileScanner.nextLine() );
         }
 
     }

@@ -1,131 +1,175 @@
 package gui;
 
+import gui.component.InteractiveScrollPane;
 import javafx.application.Application;
-import javafx.geometry.Pos;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
+import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
-//TODO: add gui documentation
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
 
 public class RITGUI extends Application {
+
+    private final VBox container;
+    private static final Buffer buffer = new Buffer();
+
+    public RITGUI() {
+        this.container = new VBox();
+    }
+
     @Override
     public void start(Stage stage) throws Exception {
 
-        //Constants
-        File INITIAL_DIRECTORY = new File("src");
-        BorderPane borderPane = new BorderPane();
-        Scene scene = new Scene(borderPane, 600,600);
+        stage.setTitle("Rich Image Tool");
 
+        this.addMenuBar();
+        this.addWorkingArea();
 
-        //Text Fields
-        Text name = new Text("RICH IMAGE TOOL\n");
-        name.setFont(Font.font("times", FontWeight.BOLD, FontPosture.REGULAR, 20));
-        Text inputFileName = new Text("Selected input file: Please select");
-        Text outputFileName = new Text("Selected output file: Please select");
-
-
-
-        //Button with reset functionality
-        Button home = new Button("Reset");
-        home.setMinSize(200,50);
-        home.setOnAction((event)->{
-            stage.hide();
-            try {
-                start(new Stage());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-
-        //Button with compress function
-        Button compress = new Button("Compress Image");
-        compress.setMinSize(200,50);
-
-        //Button with uncompress functionality
-        Button uncompress = new Button("Uncompress Image");
-        uncompress.setMinSize(200,50);
-
-        //Button to view graph
-        Button graph= new Button("Graph");
-        graph.setMinSize(200,50);
-
-
-        //Store input and output files in array
-        ArrayList<File> inputFiles = new ArrayList<>();
-
-        //Button to select input file
-        Button inputFile = new Button("Select input file");
-        inputFile.setMinSize(200,50);
-        inputFile.setOnAction((event)->{
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Open Input File");
-            fileChooser.setInitialDirectory(INITIAL_DIRECTORY);
-            inputFiles.add(0,fileChooser.showOpenDialog(stage));
-            inputFileName.setText("Selected input file: " + inputFiles.get(0));
-            System.out.println("File: " + inputFiles.get(0).getName() + ".");
-        });
-
-
-        //Button to select output file
-        Button outputFile = new Button("Select output file");
-        outputFile.setMinSize(200,50);
-        outputFile.setOnAction((event)->{
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Open Output File");
-            fileChooser.setInitialDirectory(INITIAL_DIRECTORY);
-            System.out.println(inputFiles.size());
-            if(inputFiles.size()==1){
-                inputFiles.add(1,fileChooser.showOpenDialog(stage));
-                System.out.println("File: " + inputFiles.get(0).getName() + ".");
-                outputFileName.setText("Selected output file: " + inputFiles.get(1));
-            }else{
-                outputFileName.setText("Selected output file: Select input file first");
-            }
-
-        });
-
-
-        //add buttons to side bar
-        VBox sideBar = new VBox();
-        sideBar.getChildren().addAll(home,compress,uncompress,graph,inputFile,outputFile);
-
-
-        //Add text fields to bottom rows
-        VBox filesSelected = new VBox();
-        filesSelected.getChildren().addAll(inputFileName,outputFileName);
-
-
-        //Set top bar
-        HBox topBar = new HBox();
-        topBar.setAlignment(Pos.CENTER);
-        topBar.getChildren().addAll(name);
-
-        //Set borderPane
-        borderPane.setLeft(sideBar);
-        borderPane.setTop(topBar);
-        borderPane.setBottom(filesSelected);
-
-
-
-
-
+        Scene scene = new Scene(container, 612,512);
         stage.setScene(scene);
-
 
         stage.show();
     }
 
     public static void main(String[] args) {
         Application.launch(args);
+    }
+
+    private void addMenuBar() {
+        MenuBar menuBar = new MenuBar();
+
+        Menu file = new Menu("File");
+        MenuItem openFile = new MenuItem("Open");
+        MenuItem importFile = new MenuItem("Import");
+        MenuItem exportFile = new MenuItem("Export");
+
+        openFile.setOnAction(RITGUI::openFile);
+        importFile.setOnAction(RITGUI::importFile);
+        exportFile.setOnAction(RITGUI::exportFile);
+
+        file.getItems().addAll(openFile,importFile,exportFile);
+
+        menuBar.getMenus().addAll(file);
+        addToContainer(menuBar);
+    }
+
+    private void addWorkingArea() {
+
+        TabPane tabPane = new TabPane();
+        configureTabPane(tabPane);
+
+        VBox inspector = new VBox(new Label("Inspector"), new Separator(Orientation.HORIZONTAL) );
+        inspector.setPadding( new Insets(5, 5, 5, 5) );
+        inspector.setSpacing(10);
+
+        Label inputFileLabel = new Label("Input File:");
+        TextField inputTextField = new TextField();
+        inputTextField.textProperty().bindBidirectional(this.buffer.inputPathProperty);
+        Label outputFileLabel = new Label("Output File:");
+        TextField outputTextField = new TextField();
+        outputTextField.textProperty().bindBidirectional(this.buffer.outputPathProperty);
+
+        inspector.getChildren().addAll( inputFileLabel, inputTextField, outputFileLabel, outputTextField );
+
+        SplitPane split = new SplitPane(tabPane, inspector );
+        split.setDividerPositions(0.75, 0.25);
+        VBox.setVgrow(split, Priority.ALWAYS);
+
+        addToContainer(split);
+    }
+
+    private void configureTabPane(TabPane tabPane) {
+        Tab imageViewerTab = new Tab("Image View");
+        imageViewerTab.setClosable(false);
+
+        ImageView imageView = new ImageView();
+        imageView.imageProperty().bind( this.buffer.imageObjectProperty );
+
+        InteractiveScrollPane viewport = new InteractiveScrollPane( imageView );
+        imageViewerTab.setContent( viewport.getCentered() );
+
+        tabPane.getTabs().addAll(imageViewerTab);
+        VBox.setVgrow(tabPane, Priority.ALWAYS);
+    }
+
+    private void addToContainer(Node node) {
+        this.container.getChildren().add(node);
+    }
+
+    private static void openFile(ActionEvent actionEvent) {
+        System.out.println("open file");
+
+        MenuItem menuItem = (MenuItem)actionEvent.getTarget();
+        ContextMenu menu = menuItem.getParentPopup();
+        Scene scene = menu.getScene();
+
+        File file = showFileChooser(dialogType.OPEN, scene.getWindow() );
+        buffer.inputPathProperty.setValue( file.getAbsolutePath() );
+    }
+
+    private static void importFile(ActionEvent actionEvent) {
+        System.out.println("import file");
+
+        MenuItem menuItem = (MenuItem)actionEvent.getTarget();
+        ContextMenu menu = menuItem.getParentPopup();
+        Scene scene = menu.getScene();
+
+        File file = showFileChooser(dialogType.IMPORT, scene.getWindow() );
+        buffer.inputPathProperty.setValue(file.getAbsolutePath());
+    }
+
+    private static void exportFile(ActionEvent actionEvent) {
+        System.out.println("export file");
+
+        MenuItem menuItem = (MenuItem)actionEvent.getTarget();
+        ContextMenu menu = menuItem.getParentPopup();
+        Scene scene = menu.getScene();
+
+        File file = showFileChooser(dialogType.EXPORT_COMPRESSED, scene.getWindow() );
+        buffer.outputPathProperty.setValue(file.getAbsolutePath());
+    }
+
+    private enum dialogType {
+        OPEN,
+        IMPORT,
+        EXPORT_COMPRESSED,
+        EXPORT_UNCOMPRESSED
+    }
+
+    private static File showFileChooser(dialogType type, Window stage) {
+        FileChooser fileChooser = new FileChooser();
+        switch (type) {
+            case OPEN -> fileChooser.setTitle("Open Compressed File");
+            case IMPORT -> fileChooser.setTitle("Import Un-Compressed File");
+            case EXPORT_COMPRESSED -> {
+                fileChooser.setTitle("Export Compressed Data to File");
+                return fileChooser.showSaveDialog(stage);
+            }
+            case EXPORT_UNCOMPRESSED -> {
+                fileChooser.setTitle("Export Un-Compressed Data to File");
+                return fileChooser.showSaveDialog(stage);
+            }
+        }
+        return fileChooser.showOpenDialog(stage);
+    }
+
+    private static class Buffer {
+        StringProperty inputPathProperty = new SimpleStringProperty("<null>");
+        StringProperty outputPathProperty = new SimpleStringProperty("<null>");
+        ObjectProperty<Image> imageObjectProperty = new SimpleObjectProperty<>(new Image("test.jpg"));
     }
 }

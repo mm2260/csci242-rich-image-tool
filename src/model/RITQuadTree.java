@@ -50,5 +50,8 @@ public class RITQuadTree {
 
         public void lock() {this.locked=true;}
         public void unlock() {this.locked=false;}
+
+        @Override
+        public String toString() { return String.format("%s", this.data); }
     }
 }

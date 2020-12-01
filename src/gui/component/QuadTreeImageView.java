@@ -41,6 +41,6 @@ public class QuadTreeImageView extends ImageView {
         if (size<=8){ return 50; }
         else if (size>8 && size<=32) { return 15; }
         else if (size>32 && size<=128) { return 10; }
-        else { return 2; }
+        else { return 5; }
     }
 }
