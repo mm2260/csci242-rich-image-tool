@@ -1,6 +1,7 @@
 package model;
 
 import model.RITQuadTree.DataArray;
+import model.util.exception.IllegalPixelValueException;
 
 import java.io.*;
 import java.util.*;
@@ -20,7 +21,7 @@ public class RITQTCodec {
      */
     public static RITQuadTree importFile( String fileName ) throws FileNotFoundException {
         DataArray imageData = FileHandler.getDataArray(fileName);
-        Decoder decoder = new Decoder(imageData);
+        Decoder decoder = new Decoder(imageData, fileName);
         return Encoder.encode(decoder.decode());
     }
 
@@ -31,7 +32,7 @@ public class RITQTCodec {
      * @throws FileNotFoundException
      */
     public static RITQuadTree openFile( String fileName ) throws FileNotFoundException {
-        Decoder decoder = new Decoder(FileHandler.getInputStream(fileName));
+        Decoder decoder = new Decoder(FileHandler.getInputStream(fileName), fileName);
         return Encoder.encode(decoder.decode());
     }
 
@@ -41,14 +42,16 @@ public class RITQTCodec {
 
     public static void exportUncompressed( String fileName, RITQuadTree quadTree ) throws IOException {
         export(fileName, quadTree.imageData.data);
+        System.out.println("Output file: "+fileName);
     }
 
     private static void export(String fileName, List<Integer> data) throws IOException {
+        FileHandler.validateWritePath(fileName);
         BufferedWriter bufferedWriter = FileHandler.getFileWriter(fileName);
-        System.out.println(data);
         FileHandler.writeLines(bufferedWriter, data);
         bufferedWriter.close();
     }
+
     public static class Encoder {
 
         public static RITQuadTree encode(RITQuadTree quadTree) {
@@ -80,25 +83,28 @@ public class RITQTCodec {
         private final Scanner fileScanner;
         private final DataArray dataArray;
         private final int initialSize;
+        private final String source;
 
         /**
          * Constructor for the decoder. Un-compresses dataArray from a compressed inputStream (.rit file).
          * @param resource input stream to pull data from.
          */
-        public Decoder(InputStream resource) {
+        public Decoder(InputStream resource, String source) {
             this.fileScanner = new Scanner(resource);
             this.dataArray = uncompress();
             this.initialSize = dataArray.getLength();
+            this.source = source;
         }
 
         /**
          * Constructor for the decoder.
          * @param rawData
          */
-        public Decoder(DataArray rawData ) {
+        public Decoder(DataArray rawData, String source ) {
             this.fileScanner = null;
             this.dataArray = rawData;
             this.initialSize = dataArray.getLength();
+            this.source = source;
         }
 
         /**
@@ -108,16 +114,14 @@ public class RITQTCodec {
          */
         public static RITQTNode parse(List<Integer> tokens) {
             int token = tokens.remove(0);
-            switch (token) {
-                case -1:
-                    RITQTNode ul = parse(tokens);
-                    RITQTNode ur = parse(tokens);
-                    RITQTNode ll = parse(tokens);
-                    RITQTNode lr = parse(tokens);
-                    return new RITQTNode( -1, ul, ur, ll, lr );
-                default:
-                    return new RITQTNode( token );
+            if (token == -1) {
+                RITQTNode ul = parse(tokens);
+                RITQTNode ur = parse(tokens);
+                RITQTNode ll = parse(tokens);
+                RITQTNode lr = parse(tokens);
+                return new RITQTNode(-1, ul, ur, ll, lr);
             }
+            return new RITQTNode(token);
         }
 
         /**
@@ -126,10 +130,10 @@ public class RITQTCodec {
          */
         private DataArray uncompress() {
 
-            int size = nextValue();
+            int size = FileHandler.nextValue(this.fileScanner, source);
             int sideLength = (int) Math.sqrt(size);
 
-            DataArray dataArray = new DataArray( Arrays.asList( new Integer[sideLength*sideLength] ) );
+            DataArray dataArray = new DataArray( Arrays.asList( new Integer[sideLength*sideLength] ), source );
             // equivalent to int[][] dataArray = new int[sideLength][sideLength]
 
             dataArray.unlock();
@@ -185,7 +189,7 @@ public class RITQTCodec {
          * @param startCol starting column coordinate of sub-section.
          */
         private void decode(DataArray dataArray, int size, int startRow, int startCol) {
-            int val = nextValue();
+            int val = FileHandler.nextValue(this.fileScanner, source);
 
             if(size==1) {
                 dataArray.set(startRow,startCol, val);
@@ -230,13 +234,11 @@ public class RITQTCodec {
             });
         }
 
-        /**
-         * Get next value from the scanner.
-         * @return next value in file.
-         */
-        private int nextValue() {
-            return Integer.parseInt( this.fileScanner.nextLine() );
-        }
+//        /**
+//         * Get next value from the scanner.
+//         * @return next value in file.
+//         */
+
     }
 
     private static class FileHandler {
@@ -244,8 +246,8 @@ public class RITQTCodec {
         public static DataArray getDataArray(String filename) throws FileNotFoundException {
             Scanner fileScanner = new Scanner( getInputStream(filename) );
             List<Integer> rawData = new ArrayList<>();
-            while(fileScanner.hasNext()) { rawData.add( nextValue(fileScanner) ); }
-            return new DataArray(rawData);
+            while(fileScanner.hasNext()) { rawData.add( nextValue(fileScanner, filename) ); }
+            return new DataArray(rawData, filename);
         }
 
         public static InputStream getInputStream(String filename) throws FileNotFoundException {
@@ -264,10 +266,35 @@ public class RITQTCodec {
             bufferedWriter.write( String.valueOf( representation.get( representation.size()-1 ) ) );
         }
 
-        private static int nextValue(Scanner fileScanner) {
-            return Integer.parseInt( fileScanner.nextLine() );
+        private static int nextValue(Scanner fileScanner, String source) {
+
+            String rawValue = fileScanner.nextLine();
+            boolean isNumeric = rawValue.chars().allMatch( Character::isDigit );
+            if (!isNumeric) {
+                throw new IllegalPixelValueException(rawValue, source);
+            }
+
+            int integerValue = Integer.parseInt( rawValue );
+            boolean outOfBounds = ( integerValue < 0 ) || ( 255 < integerValue );
+
+            if (outOfBounds) {
+                throw new IllegalPixelValueException(rawValue, source);
+            }
+
+            return Integer.parseInt( rawValue );
         }
 
+        public static void validateWritePath(String fileName) throws IOException {
+            File file = new File(fileName);
+            if (file.exists()) {
+                return;
+            } else {
+                File parentDirectory = new File(file.getParent());
+                if(parentDirectory.exists()) {
+                    file.createNewFile();
+                }
+            }
+        }
     }
 
 }

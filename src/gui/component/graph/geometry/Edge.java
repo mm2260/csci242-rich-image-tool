@@ -1,26 +1,28 @@
 package gui.component.graph.geometry;
 
-import gui.component.graph.GraphLayout;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Bounds;
-import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 
+import java.util.HashMap;
+
 public class Edge extends Group {
 
     Line line;
 
+//    https://stackoverflow.com/questions/44122895/javafx-bind-to-nested-position
+    final static HashMap< Cell, ObjectBinding<Bounds> > bindingsMemo = new HashMap<>();
+    static int i = 0;
+
     public Edge(Cell source, Cell target, Pane ancestor ) {
         line = new Line();
 
-        ObjectBinding<Bounds> SourceBoundsInPaneBinding = getNodeBoundsInPaneBinding(source, ancestor);
-        ObjectBinding<Bounds> TargetBoundsInPaneBinding = getNodeBoundsInPaneBinding(target, ancestor);
+        ObjectBinding<Bounds> SourceBoundsInPaneBinding = getBoundsObjectBinding(source, ancestor);
+        ObjectBinding<Bounds> TargetBoundsInPaneBinding = getBoundsObjectBinding(target, ancestor);
 
         line.startXProperty().bind(Bindings.createDoubleBinding(
                 () -> SourceBoundsInPaneBinding.get().getCenterX(),
@@ -36,7 +38,19 @@ public class Edge extends Group {
                 () -> TargetBoundsInPaneBinding.get().getMinY(),
                 TargetBoundsInPaneBinding));
 
+        System.out.println(++i);
         getChildren().add(line);
+    }
+
+    private ObjectBinding<Bounds> getBoundsObjectBinding(Cell node, Pane ancestor) {
+        ObjectBinding<Bounds> NodeBoundsInPaneBinding;
+        if (bindingsMemo.containsKey(node)) {
+            NodeBoundsInPaneBinding = bindingsMemo.get(node);
+        } else {
+            NodeBoundsInPaneBinding = getNodeBoundsInPaneBinding(node, ancestor);
+            bindingsMemo.put(node, NodeBoundsInPaneBinding);
+        }
+        return NodeBoundsInPaneBinding;
     }
 
     private ObjectBinding<Bounds> getNodeBoundsInPaneBinding(Node node, Pane ancestor) {

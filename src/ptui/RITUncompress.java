@@ -18,7 +18,9 @@ public class RITUncompress {
         outputFilePath=args[1];
 
         try {
+            System.out.println("Uncompressing: "+ inputFilePath);
             RITQuadTree quadTree = RITQTCodec.openFile(inputFilePath);
+            System.out.printf("QTree: %s%n", quadTree.getImageData());
             RITQTCodec.exportUncompressed(outputFilePath, quadTree);
 
         } catch (Exception e) {

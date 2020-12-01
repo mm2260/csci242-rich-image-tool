@@ -1,5 +1,7 @@
 package model;
 
+import model.util.exception.IllegalImageSpecification;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,9 +34,15 @@ public class RITQuadTree {
         //TODO: implement locking mechanism.
         private boolean locked = true;
 
-        public DataArray(List<Integer> data) {
+        public DataArray(List<Integer> data, String source) {
             this.data = data;
             this.length = data.size();
+
+            boolean isSquare = ( ( length!=0 ) && ( ( length & (length-1) ) == 0 ) );
+            if(!isSquare) {
+                throw new IllegalImageSpecification(this.length, source);
+            }
+
             this.size = (int) Math.sqrt(data.size());
         }
 

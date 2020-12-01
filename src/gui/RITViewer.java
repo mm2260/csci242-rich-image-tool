@@ -16,6 +16,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import model.RITQTCodec;
 import model.RITQuadTree;
+import model.util.ExceptionHandler;
 
 //TODO: add gui viewer documentation
 public class RITViewer extends Application {
@@ -25,14 +26,16 @@ public class RITViewer extends Application {
 
         stage.setTitle("RITViewer");
 
-        RITQuadTree quadTree = RITQTCodec.importFile( getParameters().getRaw().get(0) );
-        ImageView diagram = new QuadTreeImageView( quadTree );
-        GraphLayout graphLayout = new GraphLayout( new Cell(quadTree.getRoot()) );
-        InteractiveScrollPane viewport = new InteractiveScrollPane(graphLayout);
+        try {
+            RITQuadTree quadTree = RITQTCodec.importFile( getParameters().getRaw().get(0) );
+            ImageView diagram = new QuadTreeImageView( quadTree );
+            InteractiveScrollPane viewport = new InteractiveScrollPane(diagram);
+            Scene scene = new Scene(viewport.getCentered(), 512,  512);
+            stage.setScene(scene);
 
-        Scene scene = new Scene(viewport.getCentered(), 512,  512);
-        stage.setScene(scene);
-        stage.show();
+            stage.show();
+        } catch (Exception e) { ExceptionHandler.handle(e); }
+
     }
 
     public static void main(String[] args) {

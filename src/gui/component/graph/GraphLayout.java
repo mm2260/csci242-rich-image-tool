@@ -9,6 +9,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 
 import java.util.ArrayList;
@@ -18,6 +20,8 @@ public class GraphLayout extends Pane {
 
     HBox rootContainer;
     Cell root;
+
+    int size=0;
 
     public static final double INTER_NODE_GAP = 20;
     public static final double INTER_LEVEL_GAP = 30;
@@ -31,20 +35,29 @@ public class GraphLayout extends Pane {
         generate(root, rootContainer);
 
         VBox verticalRootContainer = new VBox(root, rootContainer);
+        System.out.println("GraphLayout: Configuring Nodes...");
         configureContainer(verticalRootContainer, rootContainer);
-
-        createEdges(this.root);
-        getChildren().addAll(edges);
+        System.out.println("GraphLayout: Begin Adding Nodes...");
         getChildren().add(verticalRootContainer);
+        System.out.println("GraphLayout: Added Nodes.");
+
+        Platform.runLater(() -> {
+            System.out.println("GraphLayout: Begin Adding Edges... [Might take some time]");
+            createEdges(root);
+            System.out.println("GraphLayout: Added Edges.");
+        });
+
     }
 
     private void generate( Cell root, HBox container ) {
 
-        if(root.isLeaf())
+        if(root.isLeaf()) {
+            ++size;
             return;
+        }
 
         for(Cell child : root.getCellChildren()) {
-
+            ++size;
             if (child.isLeaf() ) {
                 container.getChildren().add(child);
             } else {
@@ -91,9 +104,9 @@ public class GraphLayout extends Pane {
         }
         for( Cell child : root.getCellChildren() ) {
             if(child.isLeaf()) {
-                edges.add( new Edge(root, child, this) );
+                getChildren().add( new Edge(root, child, this) );
             } else {
-                edges.add(new Edge(root, child, this));
+                getChildren().add(new Edge(root, child, this));
                 createEdges(child);
             }
         }

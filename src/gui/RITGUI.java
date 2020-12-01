@@ -12,9 +12,12 @@ import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -183,17 +186,8 @@ public class RITGUI extends Application {
             GraphLayout graphLayout = new GraphLayout( new Cell(buffer.quadTree.getRoot()) );
             tabPane.getTabs().add(graphTab);
             tabPane.getSelectionModel().select(graphTab);
-            graphTab.setContent( new InteractiveScrollPane(graphLayout).getCentered() );
-//            Platform.runLater(graphLayout::showEdges);
-//            try {
-//                RITQuadTree quadTree = buffer.quadTree;
-//                GraphLayout graphLayout = new GraphLayout( new Cell(quadTree.getRoot()) );
-//                InteractiveScrollPane viewport = new InteractiveScrollPane(graphLayout);
-//                graphTab.setContent(viewport.getCentered());
-//                tabPane.getTabs().add(graphTab);
-//                tabPane.getSelectionModel().select(graphTab);
-//            } catch (Exception exception ) { ExceptionHandler.handle(exception); }
-
+            VBox viewport = new InteractiveScrollPane(graphLayout).getCentered();
+            graphTab.setContent( viewport );
         } );
 
         inspector.getChildren().add(generateGraphButton);

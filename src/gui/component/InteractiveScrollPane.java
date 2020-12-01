@@ -50,6 +50,7 @@ public class InteractiveScrollPane extends ScrollPane {
 
     }
 
+//    https://javafxpedia.com/en/knowledge-base/36715785/centering-content-of-scrollpane-with-fittowidth-false-using-javafx
     public VBox getCentered() {
         HBox horizontalAxis = new HBox(this);
         VBox verticalAxis = new VBox(horizontalAxis);
