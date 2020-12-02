@@ -3,20 +3,19 @@ package gui.component;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
-import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.image.*;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.transform.Scale;
 
-//TODO: add interactive scroll pane documentation
-//TODO: add references
+/**
+ * Pannable and Zoomable ScrollPane.
+ * @author Mohammed Mehboob
+ */
 public class InteractiveScrollPane extends ScrollPane {
 
     private static final int MAX_SCALE = 50;
@@ -50,7 +49,8 @@ public class InteractiveScrollPane extends ScrollPane {
 
     }
 
-//    https://javafxpedia.com/en/knowledge-base/36715785/centering-content-of-scrollpane-with-fittowidth-false-using-javafx
+    //Reference:
+    //https://javafxpedia.com/en/knowledge-base/36715785/centering-content-of-scrollpane-with-fittowidth-false-using-javafx
     public VBox getCentered() {
         HBox horizontalAxis = new HBox(this);
         VBox verticalAxis = new VBox(horizontalAxis);
@@ -73,33 +73,6 @@ public class InteractiveScrollPane extends ScrollPane {
             scrollEvent.consume();
         }
     };
-
-    private Image resample(Image input, int scaleFactor) {
-        final int W = (int) input.getWidth();
-        final int H = (int) input.getHeight();
-        final int S = scaleFactor;
-
-        WritableImage output = new WritableImage(
-                W * S,
-                H * S
-        );
-
-        PixelReader reader = input.getPixelReader();
-        PixelWriter writer = output.getPixelWriter();
-
-        for (int y = 0; y < H; y++) {
-            for (int x = 0; x < W; x++) {
-                final int argb = reader.getArgb(x, y);
-                for (int dy = 0; dy < S; dy++) {
-                    for (int dx = 0; dx < S; dx++) {
-                        writer.setArgb(x * S + dx, y * S + dy, argb);
-                    }
-                }
-            }
-        }
-
-        return output;
-    }
 
     private double clamp(double value, double max, double min) {
         if( value > max ) {

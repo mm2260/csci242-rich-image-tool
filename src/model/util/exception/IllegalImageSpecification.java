@@ -2,17 +2,20 @@ package model.util.exception;
 
 public class IllegalImageSpecification extends RuntimeException {
 
-    int invalidLength;
-    String source;
+    String message;
+
+    public IllegalImageSpecification(String malformedSize, String source) {
+        this.message = String.format("Image size must be a square number. Image file \"%s\" has malformed size data: %s.",
+                source, malformedSize);
+    }
 
     public IllegalImageSpecification(int length, String source) {
-        this.invalidLength = length;
-        this.source = source;
+        this.message = String.format("Image must be square. Image file \"%s\" has length (size*size) = %d, which is invalid.",
+                source, length);
     }
 
     @Override
     public String getMessage() {
-        return String.format("Image must be square. Image file \"%s\" has length (size*size) = %d, which is invalid.",
-                source, invalidLength);
+        return this.message;
     }
 }

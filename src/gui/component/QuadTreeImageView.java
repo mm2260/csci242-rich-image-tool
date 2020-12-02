@@ -7,6 +7,10 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import model.RITQuadTree;
 
+/**
+ * Translates QuadTree image data into an ImageView.
+ * @author Mohammed Mehboob
+ */
 public class QuadTreeImageView extends ImageView {
 
     public QuadTreeImageView(RITQuadTree quadTree) {

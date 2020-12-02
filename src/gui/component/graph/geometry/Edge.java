@@ -14,7 +14,8 @@ public class Edge extends Group {
 
     Line line;
 
-//    https://stackoverflow.com/questions/44122895/javafx-bind-to-nested-position
+    //Binding referenced from:
+    //https://stackoverflow.com/questions/44122895/javafx-bind-to-nested-position
     final static HashMap< Cell, ObjectBinding<Bounds> > bindingsMemo = new HashMap<>();
     static int i = 0;
 
@@ -53,7 +54,7 @@ public class Edge extends Group {
         return NodeBoundsInPaneBinding;
     }
 
-    private ObjectBinding<Bounds> getNodeBoundsInPaneBinding(Node node, Pane ancestor) {
+    public static ObjectBinding<Bounds> getNodeBoundsInPaneBinding(Node node, Pane ancestor) {
         return Bindings.createObjectBinding( () -> {
                     Bounds nodeLocal = node.getBoundsInLocal();
                     Bounds nodeScene = node.localToScene(nodeLocal);

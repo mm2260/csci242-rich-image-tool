@@ -3,19 +3,28 @@ package gui.component.graph;
 import gui.component.graph.geometry.Cell;
 import gui.component.graph.geometry.Edge;
 import javafx.application.Platform;
-import javafx.beans.property.ObjectProperty;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.ObjectBinding;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
-import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.ArcType;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Generate graph representation of quadtree.
+ * @author Mohammed Mehboob
+ * @author Nabeel Khan
+ */
 public class GraphLayout extends Pane {
 
     HBox rootContainer;
@@ -25,8 +34,6 @@ public class GraphLayout extends Pane {
 
     public static final double INTER_NODE_GAP = 20;
     public static final double INTER_LEVEL_GAP = 30;
-
-    private final List<Edge> edges = new ArrayList<>();
 
     public GraphLayout(Cell root) {
         this.rootContainer = new HBox();
@@ -46,7 +53,6 @@ public class GraphLayout extends Pane {
             createEdges(root);
             System.out.println("GraphLayout: Added Edges.");
         });
-
     }
 
     private void generate( Cell root, HBox container ) {
