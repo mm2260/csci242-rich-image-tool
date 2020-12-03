@@ -1,4 +1,4 @@
-#Project Submission
+# Project Submission
 **Author:** Mohammed Mehboob<br> 
 **Author:** Nabeel Khan <br>
 **Extra Credit Implemented:** QuadTree Visualization *(Generating tree diagrams out of quad-trees)*.
@@ -58,9 +58,14 @@ The _**Rich Image Tool**_ uses a structure knows as a _**quadtree**_ to compress
 
 # Design
 
-##RIT GUI
+<details>
+<summary>RITGUI Scene Tree</summary>
+    <img src="images/RITGUI.png">
+</details> 
 
-![RITGUI_Structure](images/RITGUI.png) ![GUI_Design](images/RITGUI_design.png) 
+## RIT GUI
+
+![GUI_Design](images/RITGUI_design.png) 
 
 ##### 1. Menu Bar:
         
