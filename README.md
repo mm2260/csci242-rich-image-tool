@@ -1,6 +1,4 @@
 # Project Submission
-**Author:** Mohammed Mehboob<br> 
-**Author:** Nabeel Khan <br>
 **Extra Credit Implemented:** QuadTree Visualization *(Generating tree diagrams out of quad-trees)*.
 
 # CSCI-242: Project 2: Rich Image Tool
@@ -92,19 +90,13 @@ The _**Rich Image Tool**_ uses a structure knows as a _**quadtree**_ to compress
 >![input_img](images/RITGUI_InputSection.png)
 ##### 5. Output Section:
 >![output_img](images/RITGUI_OutputSection.png)
-##### 6. View Button:
->![view_img]
-##### 7. Compress Button:
+##### 6. Compress Button:
 >![compress](images/RITGUI_CompressUncompress.png)
-##### 8. Uncompress Button:
+##### 7. Uncompress Button:
 >![uncompress](images/RITGUI_CompressUncompress.png)
-##### 9. Generate Graph:
+##### 8. Generate Graph:
 >Generates a tree diagram from the QuadTree loaded into the buffer and displays it in a new tab.<br>
 ![interactive_scrollpane_2](images/RITGUI_panning_zooming_tree.gif)
- 
- ---
- 
-## RIT Viewer
 
 ---
 
@@ -114,6 +106,3 @@ The _**Rich Image Tool**_ uses a structure knows as a _**quadtree**_ to compress
 
 >![interactive_scrollpane_1](images/RITGUI_panning_zooming.gif)
 
-### Cell & Edge
-
-### GraphLayout
